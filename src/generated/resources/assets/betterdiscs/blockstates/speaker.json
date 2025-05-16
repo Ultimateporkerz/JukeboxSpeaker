@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "betterdiscs:block/speaker",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "betterdiscs:block/speaker"
+    },
+    "facing=south": {
+      "model": "betterdiscs:block/speaker",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "betterdiscs:block/speaker",
+      "y": 270
+    }
+  }
+}

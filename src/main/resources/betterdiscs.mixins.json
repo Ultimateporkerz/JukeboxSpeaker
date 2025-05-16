@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.ultimporks.betterdiscs.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "refmap": "mixins.betterdiscs.refmap.json",
+  "plugin": "net.ultimporks.betterdiscs.mixins.MixinPlugin",
+  "mixins": [
+    "JukeboxBlockEntityMixin",
+    "LevelMixin",
+    "NoteBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

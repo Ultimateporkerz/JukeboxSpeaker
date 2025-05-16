@@ -1,0 +1,12 @@
+{
+  "type": "betterdiscs:record_lathe_station",
+  "ingredients": [
+    {
+      "item": "betterdiscs:blank_music_disc"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "item": "betterdiscs:have_ghosts"
+  }
+}
