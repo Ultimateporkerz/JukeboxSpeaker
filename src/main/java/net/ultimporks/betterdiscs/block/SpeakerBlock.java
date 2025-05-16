@@ -1,11 +1,12 @@
 package net.ultimporks.betterdiscs.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,13 +26,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import net.ultimporks.betterdiscs.item.TuningTool;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class SpeakerBlock extends BaseEntityBlock {
+    public static final MapCodec<SpeakerBlock> CODEC = simpleCodec(SpeakerBlock::new);
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+
+    @Override
+    public MapCodec<SpeakerBlock> codec() {
+        return CODEC;
+    }
 
     public SpeakerBlock(Properties pProperties) {
         super(pProperties);
@@ -55,23 +61,17 @@ public class SpeakerBlock extends BaseEntityBlock {
         return true;
     }
     public int getAnalogOutputSignal(BlockState pBlockState, Level pLevel, BlockPos pPos) {
-        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (blockentity instanceof SpeakerBlockEntity speakerBlockEntity) {
-            Item item = speakerBlockEntity.getCurrentDisc();
-            if (item instanceof RecordItem recorditem) {
-                return recorditem.getAnalogOutput();
-            }
-        }
-
-        return 0;
+        return pLevel.getBlockEntity(pPos) instanceof SpeakerBlockEntity speakerBlockEntity ? speakerBlockEntity.getComparatorOutput() : 0;
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(Component.translatable("block.betterdiscs.description.speaker"));
+    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        pTooltipComponents.add(Component.translatable("block.betterdiscs.description.speaker"));
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
     }
+
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         if (!pLevel.isClientSide) {
             // Check if player is holding the link tool
             ItemStack inHandItem = pPlayer.getItemInHand(InteractionHand.MAIN_HAND);
@@ -79,8 +79,9 @@ public class SpeakerBlock extends BaseEntityBlock {
                 return InteractionResult.FAIL;
         }
             BlockEntity entity = pLevel.getBlockEntity(pPos);
+            MenuProvider menuProvider = this.getMenuProvider(pState, pLevel, pPos);
             if (entity instanceof SpeakerBlockEntity) {
-                NetworkHooks.openScreen(((ServerPlayer) pPlayer), (SpeakerBlockEntity)entity, pPos);
+                pPlayer.openMenu(menuProvider);
             } else {
                 throw new IllegalStateException("Container Provider is missing!");
             }
@@ -109,6 +110,6 @@ public class SpeakerBlock extends BaseEntityBlock {
             return null;
         }
         return createTickerHelper(pBlockEntityType, ModBlockEntities.SPEAKER_BE.get(),
-                (level1, pos, state1, blockEntity) -> blockEntity.tick(level1, pos, state1));
+                (level1, pos, state1, blockEntity) -> blockEntity.tick(level1, pos, state1, blockEntity));
     }
 }

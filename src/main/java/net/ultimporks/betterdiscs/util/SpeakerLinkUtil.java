@@ -3,6 +3,8 @@ package net.ultimporks.betterdiscs.util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.JukeboxSong;
+import net.minecraft.world.item.JukeboxSongs;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.NoteBlock;
@@ -205,7 +207,7 @@ public class SpeakerLinkUtil {
     public static void deactivateSpeakerJukebox(Level level, BlockPos speakerPos) {
         if (level.isClientSide) return;
         if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
-            speakerBlock.setActive(false, ItemStack.EMPTY);
+            speakerBlock.setActive(level, null);
             S2CSyncJukeboxOrNoteblockStopMessage message = new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, false);
             ModMessages.getPlayChannel().sendToAll(message);
         }

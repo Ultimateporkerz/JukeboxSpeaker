@@ -7,9 +7,7 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
-import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.Reference;
-import net.ultimporks.betterdiscs.init.CustomModItems;
 import net.ultimporks.betterdiscs.init.ModItems;
 
 public class ModItemModelProvider extends ItemModelProvider {
@@ -22,11 +20,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.BLANK_MUSIC_DISC);
         simpleItem(ModItems.RESIN_BALL);
         simpleItem(ModItems.TUNING_TOOL);
-        if (!BetterMusicDiscs.isRelease()) {
-            simpleCustomItem(CustomModItems.WOMP_PORTAL);
-            simpleCustomItem(CustomModItems.HAVE_GHOSTS);
-            simpleCustomItem(CustomModItems.BAD);
-        }
     }
 
     // Helper Method

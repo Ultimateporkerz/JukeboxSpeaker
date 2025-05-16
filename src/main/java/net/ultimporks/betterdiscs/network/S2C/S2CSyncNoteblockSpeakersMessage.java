@@ -1,20 +1,15 @@
 package net.ultimporks.betterdiscs.network.S2C;
 
-import com.mrcrayfish.framework.api.network.MessageContext;
-import com.mrcrayfish.framework.api.network.message.PlayMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.ultimporks.betterdiscs.client.SpeakerSoundEvent;
 
-import java.util.Objects;
-
-public class S2CSyncNoteblockSpeakersMessage extends PlayMessage<S2CSyncNoteblockSpeakersMessage> {
+public class S2CSyncNoteblockSpeakersMessage {
     private BlockPos speakerPos;
     private String instrumentName;
     private int note;
     private float volume;
-
-    public S2CSyncNoteblockSpeakersMessage() {}
 
     public S2CSyncNoteblockSpeakersMessage(BlockPos speakerPos, String instrumentName, int note, float volume) {
         this.speakerPos = speakerPos;
@@ -23,26 +18,21 @@ public class S2CSyncNoteblockSpeakersMessage extends PlayMessage<S2CSyncNotebloc
         this.volume = volume;
     }
 
-
-    @Override
-    public void encode(S2CSyncNoteblockSpeakersMessage message, FriendlyByteBuf buf) {
-        buf.writeBlockPos(message.speakerPos);
-        buf.writeUtf(message.instrumentName);
-        buf.writeInt(message.note);
-        buf.writeFloat(message.volume);
+    public S2CSyncNoteblockSpeakersMessage (FriendlyByteBuf buf) {
+        this.speakerPos = buf.readBlockPos();
+        this.instrumentName = buf.readUtf();
+        this.note = buf.readInt();
+        this.volume = buf.readFloat();
     }
 
-    @Override
-    public S2CSyncNoteblockSpeakersMessage decode(FriendlyByteBuf buf) {
-        return new S2CSyncNoteblockSpeakersMessage(buf.readBlockPos(), buf.readUtf(), buf.readInt(), buf.readFloat());
+    public void encode(FriendlyByteBuf buf) {
+        buf.writeBlockPos(speakerPos);
+        buf.writeUtf(instrumentName);
+        buf.writeInt(note);
+        buf.writeFloat(volume);
     }
 
-    @Override
-    public void handle(S2CSyncNoteblockSpeakersMessage message, MessageContext ctx) {
-        if (!Objects.requireNonNull(ctx.getDirection()).isClient()) {
-            return;
-        }
-        SpeakerSoundEvent.playNoteBlock(message.speakerPos, message.instrumentName, message.note, message.volume);
-        ctx.setHandled(true);
+    public void handle(CustomPayloadEvent.Context context) {
+        SpeakerSoundEvent.playNoteBlock(speakerPos, instrumentName, note, volume);
     }
 }

@@ -40,13 +40,12 @@ public class BetterMusicDiscs {
         MinecraftForge.EVENT_BUS.register(this);
 
         if (!isRelease) {
-            CustomModItems.register(modEventBus);
             ModSounds.register(modEventBus);
         }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(ModMessages::init);
+        ModMessages.register();
     }
 
     public static boolean isRelease() {

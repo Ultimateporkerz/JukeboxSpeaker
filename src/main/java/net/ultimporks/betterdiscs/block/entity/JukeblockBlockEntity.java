@@ -2,6 +2,7 @@ package net.ultimporks.betterdiscs.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -182,9 +182,6 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         return availableSlots.get(new Random().nextInt(availableSlots.size()));
     }
 
-    private boolean shouldRecordStopPlaying(RecordItem pRecord) {
-        return this.tickCount >= this.recordStartedTick + (long) pRecord.getLengthInTicks() + 20L;
-    }
     private boolean shouldSendJukeblockPlayingEvent() {
         return this.ticksSinceLastEvent >= 20;
     }
@@ -291,8 +288,8 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
 
     // Block data
     @Override
-    public void load(CompoundTag pTag) {
-        super.load(pTag);
+    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
         this.isPlaying = pTag.getInt("isPlaying");
         this.isStopped = pTag.getInt("isStopped");
         this.volume = pTag.getInt("Volume");
@@ -302,8 +299,8 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         this.itemHandler.deserializeNBT(pTag.getCompound("inventory"));
     }
     @Override
-    protected void saveAdditional(CompoundTag pTag) {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         pTag.putInt("isPlaying", this.isPlaying);
         pTag.putInt("isStopped", this.isStopped);
         pTag.putInt("Volume", this.volume);

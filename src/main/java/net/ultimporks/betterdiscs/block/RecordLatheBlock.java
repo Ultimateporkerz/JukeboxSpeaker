@@ -1,12 +1,13 @@
 package net.ultimporks.betterdiscs.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -22,14 +23,13 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import net.ultimporks.betterdiscs.block.entity.RecordLatheBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlockEntities;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class RecordLatheBlock extends BaseEntityBlock {
+    public static final MapCodec<RecordLatheBlock> CODEC1 = simpleCodec(props -> new RecordLatheBlock(props, ModBlockEntities.RECORD_LATHE_BE::get));
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 10, 16);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
@@ -38,15 +38,22 @@ public class RecordLatheBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        pTooltip.add(Component.translatable("block.betterdiscs.description.record_lathe"));
+    public MapCodec<? extends RecordLatheBlock> codec() {
+        return CODEC1;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        pTooltipComponents.add(Component.translatable("block.betterdiscs.description.record_lathe"));
+
     }
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         if (!pLevel.isClientSide) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
+            MenuProvider menuProvider = this.getMenuProvider(pState, pLevel, pPos);
             if (entity instanceof RecordLatheBlockEntity) {
-                NetworkHooks.openScreen(((ServerPlayer) pPlayer), (RecordLatheBlockEntity)entity, pPos);
+                pPlayer.openMenu(menuProvider);
             } else {
                 throw new IllegalStateException("Container Provider is missing!");
             }
