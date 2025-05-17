@@ -13,9 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(Reference.MOD_ID)
 public class BetterMusicDiscs {
-    // Release
-    private static final boolean isRelease = false;
-
     // Debugging
     private static final boolean debuggingJukebox = false;
     private static final boolean debuggingNoteblock = false;
@@ -38,18 +35,10 @@ public class BetterMusicDiscs {
 
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
-
-        if (!isRelease) {
-            ModSounds.register(modEventBus);
-        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         ModMessages.register();
-    }
-
-    public static boolean isRelease() {
-        return isRelease;
     }
 
     public static void jukeboxLOGGING(String logMessage) {
