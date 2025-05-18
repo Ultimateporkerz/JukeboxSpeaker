@@ -1,0 +1,33 @@
+{
+  "block.betterdiscs.record_press": "Record Press",
+  "block.betterdiscs.record_lathe": "Record Lathe",
+  "block.betterdiscs.speaker": "Speaker",
+  "block.betterdiscs.ceiling_speaker": "Ceiling Speaker",
+  "block.betterdiscs.wall_speaker": "Wall Speaker",
+  "block.betterdiscs.jukeblock": "Jukeblock",
+
+  "item.betterdiscs.resin_ball": "Resin Clump",
+  "item.betterdiscs.blank_music_disc": "Blank Record",
+  "item.betterdiscs.tuning_tool": "Tuning Fork",
+
+  "item.betterdiscs.description.resin_ball": "Used in a Record Press",
+  "item.betterdiscs.description.music_disc": "Used in a Record lathe",
+  "item.betterdiscs.description.tuning_tool": "Used to connect Jukebox & Speakers together",
+
+  "block.betterdiscs.description.record_press": "Smashes Resin Clumps into Blank Records",
+  "block.betterdiscs.description.record_lathe": "Imprints song to Blank Music Disc",
+  "block.betterdiscs.description.speaker": "Extends range of Jukeboxes",
+
+  "betterdiscs.creativetab": "Better Music Discs",
+
+  "item.betterdiscs.womp_portal": "Music Disc",
+  "item.betterdiscs.womp_portal.desc": "Ganja White Night x Subtronics - Womp Portal",
+  "item.betterdiscs.have_ghosts": "Music Disc",
+  "item.betterdiscs.have_ghosts.desc": "Roky Erickson - If You Have Ghosts",
+  "item.betterdiscs.bad": "Music Disc",
+  "item.betterdiscs.bad.desc": "Don Diablo - Bad",
+  "block.betterdiscs.jukebox": "Jukeblock"
+
+
+
+}

@@ -1,0 +1,12 @@
+{
+  "type": "betterdiscs:record_press_station",
+  "ingredients": [
+    {
+      "item": "betterdiscs:resin_ball"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "item": "betterdiscs:blank_music_disc"
+  }
+}

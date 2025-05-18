@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "betterdiscs:speaker",
+    "betterdiscs:wall_speaker",
+    "betterdiscs:ceiling_speaker",
+    "betterdiscs:jukeblock"
+
+  ]
+}
