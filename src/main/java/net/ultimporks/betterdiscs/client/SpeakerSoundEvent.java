@@ -4,10 +4,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.JukeboxSong;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,19 +25,21 @@ import java.util.Map;
 public class SpeakerSoundEvent {
     public static Minecraft minecraft = Minecraft.getInstance();
 
-    private static final Map<BlockPos, SoundInstance> ACTIVE_SOUNDS_JUKEBOX = new HashMap<>();
+    private static final Map<BlockPos, SoundInfo> ACTIVE_SOUNDS_JUKEBOX = new HashMap<>();
 
     // Jukebox Sounds
-    public static void playSound(float volume, BlockPos speakerPos, Item currentDisc) {
-        if (currentDisc instanceof RecordItem recordItem) {
-            if (ACTIVE_SOUNDS_JUKEBOX.containsKey(speakerPos)) {
-                BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Song is already playing for speaker at: " + speakerPos);
-                return;
-            }
-            // Get the Sound Event
-            SoundEvent soundEvent = recordItem.getSound();
+    public static void playSound(float volume, BlockPos speakerPos, ItemStack currentDisc) {
+        Level level = minecraft.level;
+        if (level == null || currentDisc.isEmpty()) return;
 
-            // Create sound instance
+        RegistryAccess registryAccess = level.registryAccess();
+
+        JukeboxSong.fromStack(registryAccess, currentDisc).ifPresent(songHolder -> {
+            JukeboxSong song = songHolder.value();
+
+            SoundEvent soundEvent = song.soundEvent().get();
+            int durationTicks = song.lengthInTicks();
+
             SoundInstance soundInstance = new SimpleSoundInstance(
                     soundEvent,
                     SoundSource.RECORDS,
@@ -42,26 +48,36 @@ public class SpeakerSoundEvent {
                     SoundInstance.createUnseededRandom(),
                     speakerPos
             );
+
+            SoundInfo firstSoundInfo = new SoundInfo(soundInstance, soundEvent, 0, durationTicks);
+
             minecraft.execute(() -> {
                 minecraft.getSoundManager().play(soundInstance);
-                ACTIVE_SOUNDS_JUKEBOX.put(speakerPos, soundInstance);
+                ACTIVE_SOUNDS_JUKEBOX.put(speakerPos, firstSoundInfo);
                 BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Music is starting! Volume: " + volume);
             });
-        }
+        });
     }
     public static void stopSound(BlockPos speakerPos) {
         minecraft.execute(() -> {
-            minecraft.getSoundManager().stop(ACTIVE_SOUNDS_JUKEBOX.get(speakerPos));
-            ACTIVE_SOUNDS_JUKEBOX.remove(speakerPos);
-            BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Music is stopping!");
+            SoundInfo soundInfo = ACTIVE_SOUNDS_JUKEBOX.get(speakerPos);
+            if (soundInfo != null) {
+                minecraft.getSoundManager().stop(soundInfo.soundInstance);
+                ACTIVE_SOUNDS_JUKEBOX.remove(speakerPos);
+                BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Music is stopping!");
+            }
         });
     }
     public static void stopAllSounds() {
-        ACTIVE_SOUNDS_JUKEBOX.forEach((speakerPos, soundInstance) -> minecraft.execute(() -> {
-            minecraft.getSoundManager().stop(soundInstance);
-            ACTIVE_SOUNDS_JUKEBOX.remove(speakerPos);
-            BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Music is stopping for all speakers.");
-        }));
+        minecraft.execute(() -> {
+            ACTIVE_SOUNDS_JUKEBOX.forEach((speakerPos, soundInstance) -> minecraft.execute(() -> {
+                SoundInfo soundInfo = ACTIVE_SOUNDS_JUKEBOX.get(speakerPos);
+                minecraft.getSoundManager().stop(soundInfo.soundInstance);
+                ACTIVE_SOUNDS_JUKEBOX.remove(speakerPos);
+                BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Music is stopping for all speakers.");
+            }));
+        });
+
     }
 
     // NoteBlock sounds

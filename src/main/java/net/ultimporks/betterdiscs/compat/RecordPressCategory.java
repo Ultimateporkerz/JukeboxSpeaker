@@ -3,11 +3,13 @@ package net.ultimporks.betterdiscs.compat;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -17,8 +19,8 @@ import net.ultimporks.betterdiscs.recipe.RecordPressRecipe;
 import org.jetbrains.annotations.Nullable;
 
 public class RecordPressCategory implements IRecipeCategory<RecordPressRecipe> {
-    public static final ResourceLocation UID = new ResourceLocation(Reference.MOD_ID, "record_press");
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID,
+    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "record_press");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID,
             "textures/gui/record_press_station_gui.png");
 
     public static RecipeType<RecordPressRecipe> RECORD_PRESS_RECIPE_TYPE =
@@ -32,7 +34,6 @@ public class RecordPressCategory implements IRecipeCategory<RecordPressRecipe> {
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.RECORD_PRESS.get()));
     }
 
-
     @Override
     public RecipeType<RecordPressRecipe> getRecipeType() {
         return RECORD_PRESS_RECIPE_TYPE;
@@ -44,14 +45,25 @@ public class RecordPressCategory implements IRecipeCategory<RecordPressRecipe> {
     }
 
     @Override
-    public IDrawable getBackground() {
-        return this.background;
-    }
-
-    @Override
     public @Nullable IDrawable getIcon() {
         return this.icon;
     }
+
+    @Override
+    public int getWidth() {
+        return this.background.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return this.background.getHeight();
+    }
+
+    @Override
+    public void draw(RecordPressRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        this.background.draw(guiGraphics, 0, 0);
+    }
+
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, RecordPressRecipe recipe, IFocusGroup focuses) {

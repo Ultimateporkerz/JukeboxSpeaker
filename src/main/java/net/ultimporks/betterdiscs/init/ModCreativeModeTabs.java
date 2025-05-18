@@ -27,11 +27,6 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.WALL_SPEAKER.get());
                         output.accept(ModItems.TUNING_TOOL.get());
                         output.accept(ModBlocks.JUKEBLOCK.get());
-                        if (!BetterMusicDiscs.isRelease()) {
-                            output.accept(CustomModItems.BAD.get());
-                            output.accept(CustomModItems.HAVE_GHOSTS.get());
-                            output.accept(CustomModItems.WOMP_PORTAL.get());
-                        }
                     }).build());
 
 

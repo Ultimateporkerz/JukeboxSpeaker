@@ -1,16 +1,18 @@
 package net.ultimporks.betterdiscs.network.S2C;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.ultimporks.betterdiscs.client.JukeblockSoundEvents;
 
 public class S2CSyncJukeblockPlayMessage {
-    private BlockPos jukeblockOrSpeakerPos;
-    private ItemStack currentDisc;
-    private float volume;
-    private boolean speakers;
+    private final BlockPos jukeblockOrSpeakerPos;
+    private final ItemStack currentDisc;
+    private final float volume;
+    private final boolean speakers;
 
     // Constructor for playing Jukeblock
     public S2CSyncJukeblockPlayMessage(BlockPos jukeblockPos, ItemStack currentDisc, float volume) {
@@ -28,25 +30,31 @@ public class S2CSyncJukeblockPlayMessage {
         this.speakers = isSpeaker;
     }
 
-    public S2CSyncJukeblockPlayMessage (FriendlyByteBuf buf) {
+    public S2CSyncJukeblockPlayMessage(FriendlyByteBuf buf) {
         this.jukeblockOrSpeakerPos = buf.readBlockPos();
-        this.currentDisc = buf.readItemStack();
-        this.volume = buf.readInt();
+        CompoundTag tag = buf.readNbt();
+        this.currentDisc = ItemStack.CODEC.parse(NbtOps.INSTANCE, tag)
+                .resultOrPartial(error -> System.err.println("Failed to decode ItemStack: " + error))
+                .orElse(ItemStack.EMPTY);
+        this.volume = buf.readFloat();
         this.speakers = buf.readBoolean();
     }
 
+
     public void encode(FriendlyByteBuf buf) {
         buf.writeBlockPos(jukeblockOrSpeakerPos);
-        buf.writeItemStack(currentDisc, false);
+        buf.writeNbt(ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, currentDisc)
+                .getOrThrow());
         buf.writeFloat(volume);
         buf.writeBoolean(speakers);
     }
 
+
     public void handle(CustomPayloadEvent.Context context) {
         if (speakers) {
-            JukeblockSoundEvents.playJukeblock(jukeblockOrSpeakerPos, currentDisc.getItem(), volume);
+            JukeblockSoundEvents.playJukeblock(jukeblockOrSpeakerPos, currentDisc, volume);
         } else {
-            JukeblockSoundEvents.playJukeblockSpeakers(jukeblockOrSpeakerPos, currentDisc.getItem(), volume);
+            JukeblockSoundEvents.playJukeblockSpeakers(jukeblockOrSpeakerPos, currentDisc, volume);
         }
     }
 }

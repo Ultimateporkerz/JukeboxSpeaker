@@ -1,13 +1,14 @@
-package net.ultimporks.betterdiscs.util;
+package net.ultimporks.betterdiscs.data;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +22,7 @@ public class SpeakerLinkData extends SavedData {
     private static final String NBT_KEY = "LinkedSpeakers";
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider pRegistries) {
         CompoundTag dataTag = new CompoundTag();
         saveSpeakerMap(dataTag, "jukebox", linkedSpeakersJukebox);
         saveSpeakerMap(dataTag, "noteblock", linkedSpeakersNoteblock);
@@ -235,7 +236,7 @@ public class SpeakerLinkData extends SavedData {
             Set<BlockPos> speakers = new HashSet<>();
 
             for (int i = 0; i < speakerList.size(); i++) {
-                BlockPos speakerPos = NbtUtils.readBlockPos(speakerList.getCompound(i));
+                BlockPos speakerPos = readBlockPosSafe(speakerList.getCompound(i));
 
                 if (!speakerPos.equals(masterPos)) {
                     speakers.add(speakerPos);
@@ -248,4 +249,18 @@ public class SpeakerLinkData extends SavedData {
             }
         }
     }
+
+    private static BlockPos readBlockPosSafe(CompoundTag tag) {
+        try {
+            int x = tag.getInt("X");
+            int y = tag.getInt("Y");
+            int z = tag.getInt("Z");
+            return new BlockPos(x, y, z);
+        } catch (Exception e) {
+            BetterMusicDiscs.speakerLOGGING("Failed to read BlockPos from tag: " + tag);
+            return null;
+        }
+    }
+
+
 }

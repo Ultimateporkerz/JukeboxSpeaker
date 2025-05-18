@@ -2,6 +2,7 @@ package net.ultimporks.betterdiscs.init;
 
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
@@ -21,7 +22,6 @@ public class ModMessages {
             .simpleChannel();
 
     public static void register() {
-
 
         // PLAY TO CLIENT
         INSTANCE.messageBuilder(S2CSyncJukeblockPlayMessage.class, NetworkDirection.PLAY_TO_CLIENT)
@@ -82,16 +82,17 @@ public class ModMessages {
 
     }
 
-    public static void sendToServer(Object msg) {
+    public static <MSG> void sendToServer(MSG msg) {
         INSTANCE.send(msg, PacketDistributor.SERVER.noArg());
     }
 
-    public static void sendToPlayer(Object msg, ServerPlayer player) {
+    public static <MSG> void sendToPlayer(MSG msg, ServerPlayer player) {
         INSTANCE.send(msg, PacketDistributor.PLAYER.with(player));
     }
 
-    public static void sendToAllPlayer(Object msg) {
-        INSTANCE.send(msg, PacketDistributor.ALL.noArg());
+    public static <MSG> void sendToAllPlayers(MSG msg) {
+        for (ServerPlayer player : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            INSTANCE.send(msg, PacketDistributor.PLAYER.with(player));
+        }
     }
-
 }

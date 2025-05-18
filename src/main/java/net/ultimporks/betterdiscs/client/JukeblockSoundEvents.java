@@ -4,9 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.JukeboxSong;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
@@ -25,13 +29,18 @@ public class JukeblockSoundEvents {
 
     // Jukeblock Block
 
-    public static void playJukeblock(BlockPos jukeBlockPos, Item currentDisc, float volume) {
-        if (currentDisc instanceof RecordItem recordItem) {
-            // Get the Sound Event and Duration
-            SoundEvent soundEvent = recordItem.getSound();
-            int durationTicks = recordItem.getLengthInTicks();
+    public static void playJukeblock(BlockPos jukeBlockPos, ItemStack currentDisc, float volume) {
+        Level level = minecraft.level;
+        if (level == null || currentDisc.isEmpty()) return;
 
-            // Create Sound Instance
+        RegistryAccess registryAccess = level.registryAccess();
+
+        JukeboxSong.fromStack(registryAccess, currentDisc).ifPresent(songHolder -> {
+            JukeboxSong song = songHolder.value();
+
+            SoundEvent soundEvent = song.soundEvent().value();
+            int durationTicks = song.lengthInTicks();
+
             SoundInstance soundInstance = new SimpleSoundInstance(
                     soundEvent,
                     SoundSource.RECORDS,
@@ -40,15 +49,17 @@ public class JukeblockSoundEvents {
                     SoundInstance.createUnseededRandom(),
                     jukeBlockPos
             );
+
             SoundInfo firstSoundInfo = new SoundInfo(soundInstance, soundEvent, 0, durationTicks);
 
             minecraft.execute(() -> {
                 minecraft.getSoundManager().play(soundInstance);
                 ACTIVE_SOUNDS_JUKEBLOCK.put(jukeBlockPos, firstSoundInfo);
-                BetterMusicDiscs.jukeblockLOGGING("(JukeblockSoundEvent) - Jukeblock is starting! Volume: " + volume);
+                BetterMusicDiscs.jukeblockLOGGING("(JukeblockSoundEvent) - Playing song: " + song.description().getString());
             });
-        }
+        });
     }
+
     public static void stopJukeblockSound(BlockPos jukeblockPos) {
         minecraft.execute(() -> {
             SoundInfo soundInfo = ACTIVE_SOUNDS_JUKEBLOCK.get(jukeblockPos);
@@ -62,13 +73,18 @@ public class JukeblockSoundEvents {
 
     // Speakers
 
-    public static void playJukeblockSpeakers(BlockPos speakerPos, Item currentDisc, float volume) {
-        if (currentDisc instanceof RecordItem recordItem) {
-            // Get the Sound Event and Duration
-            SoundEvent soundEvent = recordItem.getSound();
-            int durationTicks = recordItem.getLengthInTicks();
+    public static void playJukeblockSpeakers(BlockPos speakerPos, ItemStack currentDisc, float volume) {
+        Level level = minecraft.level;
+        if (level == null || currentDisc.isEmpty()) return;
 
-            // Create Sound Instance
+        RegistryAccess registryAccess = level.registryAccess();
+
+        JukeboxSong.fromStack(registryAccess, currentDisc).ifPresent(songHolder -> {
+            JukeboxSong song = songHolder.value();
+
+            SoundEvent soundEvent = song.soundEvent().value();
+            int durationTicks = song.lengthInTicks();
+
             SoundInstance soundInstance = new SimpleSoundInstance(
                     soundEvent,
                     SoundSource.RECORDS,
@@ -77,15 +93,17 @@ public class JukeblockSoundEvents {
                     SoundInstance.createUnseededRandom(),
                     speakerPos
             );
+
             SoundInfo firstSoundInfo = new SoundInfo(soundInstance, soundEvent, 0, durationTicks);
 
-            minecraft.execute(() -> {
+            Minecraft.getInstance().execute(() -> {
                 minecraft.getSoundManager().play(soundInstance);
                 ACTIVE_SOUNDS_JUKEBLOCK_SPEAKERS.put(speakerPos, firstSoundInfo);
-                BetterMusicDiscs.jukeblockLOGGING("(JukeblockSoundEvent) - Speaker is starting! Volume: " + volume);
+                BetterMusicDiscs.jukeblockLOGGING("(JukeblockSoundEvent) - Speaker is starting! Song: " + song.description().getString() + ", Volume: " + volume);
             });
-        }
+        });
     }
+
     public static void stopSpeakerSound(BlockPos speakerPos) {
         minecraft.execute(() -> {
             SoundInfo soundInfo = ACTIVE_SOUNDS_JUKEBLOCK_SPEAKERS.get(speakerPos);
@@ -102,4 +120,10 @@ public class JukeblockSoundEvents {
             stopSpeakerSound(speakerPos);
         }
     }
+
+
+
+
+
+
 }

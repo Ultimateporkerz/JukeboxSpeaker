@@ -2,7 +2,6 @@ package net.ultimporks.betterdiscs;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -23,7 +22,6 @@ public class BetterMusicDiscs {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public BetterMusicDiscs(FMLJavaModLoadingContext context) {
-        ModContainer modContainer = context.getContainer();
         IEventBus modEventBus = context.getModEventBus();
 
         ModBlocks.register(modEventBus);
@@ -32,6 +30,7 @@ public class BetterMusicDiscs {
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModRecipes.register(modEventBus);
+        ModDataComponents.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);

@@ -25,7 +25,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
         TagKey<Block> SPEAKERS = TagKey.create(Registries.BLOCK,
-                new ResourceLocation(Reference.MOD_ID, "speakers"));
+                ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "speakers"));
 
 
     }

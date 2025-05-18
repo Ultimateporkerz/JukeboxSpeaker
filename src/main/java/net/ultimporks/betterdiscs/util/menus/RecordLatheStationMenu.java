@@ -12,6 +12,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import net.ultimporks.betterdiscs.block.entity.RecordLatheBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.init.ModMenuTypes;
+import net.ultimporks.betterdiscs.init.ModRecipes;
 import net.ultimporks.betterdiscs.recipe.RecordLatheRecipe;
 
 import java.util.ArrayList;
@@ -85,10 +86,14 @@ public class RecordLatheStationMenu extends AbstractContainerMenu {
         return this.getRecipes().size();
     }
     public List<RecordLatheRecipe> getRecipes() {
-        List<RecordLatheRecipe> recipes = new ArrayList<>(this.level.getRecipeManager().getAllRecipesFor(RecordLatheRecipe.Type.INSTANCE));
-        recipes.sort(Comparator.comparing(r -> r.getId().toString()));
-        return recipes;
+        return this.level.getRecipeManager()
+                .getAllRecipesFor(ModRecipes.RECORD_LATHE_TYPE.get())
+                .stream()
+                .map(holder -> holder.value())
+                .sorted(Comparator.comparing(r -> r.getType().toString()))
+                .toList();
     }
+
     public int getSelectedRecipeIndex() {
         return data.get(2);
     }

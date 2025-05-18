@@ -1,44 +1,35 @@
 package net.ultimporks.betterdiscs.recipe;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.ultimporks.betterdiscs.Reference;
-import org.jetbrains.annotations.NotNull;
+import net.ultimporks.betterdiscs.init.ModRecipes;
 
-public class RecordLatheRecipe implements Recipe<SimpleContainer> {
-    private final NonNullList<Ingredient> inputItems;
-    private final ItemStack output;
-    private final ResourceLocation id;
-
-    public RecordLatheRecipe(NonNullList<Ingredient> inputItems, ItemStack output, ResourceLocation id) {
-        this.inputItems = inputItems;
-        this.output = output;
-        this.id = id;
-    }
-
-    @Override
-    public boolean matches(SimpleContainer pContainer, Level pLevel) {
-        if (pLevel.isClientSide()) {
-            return false;
-        }
-        return inputItems.get(0).test(pContainer.getItem(0));
-    }
+public record RecordLatheRecipe(Ingredient inputItem, ItemStack output) implements Recipe<RecordLatheRecipeInput> {
 
     @Override
     public NonNullList<Ingredient> getIngredients() {
-        return inputItems;
+        NonNullList<Ingredient> list = NonNullList.create();
+        list.add(inputItem);
+        return list;
     }
+
     @Override
-    public ItemStack assemble(SimpleContainer pContainer, RegistryAccess pRegistryAccess) {
+    public boolean matches(RecordLatheRecipeInput pInput, Level pLevel) {
+        if (pLevel.isClientSide) {
+            return false;
+        }
+        return inputItem.test(pInput.getItem(0));
+    }
+
+    @Override
+    public ItemStack assemble(RecordLatheRecipeInput pInput, HolderLookup.Provider pRegistries) {
         return output.copy();
     }
 
@@ -48,71 +39,40 @@ public class RecordLatheRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
-        return output.copy();
+    public ItemStack getResultItem(HolderLookup.Provider pRegistries) {
+        return output;
     }
 
     @Override
-    public ResourceLocation getId() {
-        return id;
-    }
-
-    @Override
-    public @NotNull RecipeSerializer<?> getSerializer() {
-        return Serializer.INSTANCE;
+    public RecipeSerializer<?> getSerializer() {
+        return ModRecipes.RECORD_LATHE_STATION_SERIALIZER.get();
     }
 
     @Override
     public RecipeType<?> getType() {
-        return Type.INSTANCE;
-    }
-
-    public static class Type implements RecipeType<RecordLatheRecipe> {
-        public static final Type INSTANCE = new Type();
-        public static final String ID = "record_lathe_station";
+        return ModRecipes.RECORD_LATHE_TYPE.get();
     }
 
     public static class Serializer implements RecipeSerializer<RecordLatheRecipe> {
-        public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "record_lathe_station");
+        public static final MapCodec<RecordLatheRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+                Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(RecordLatheRecipe::inputItem),
+                ItemStack.CODEC.fieldOf("result").forGetter(RecordLatheRecipe::output)
+        ).apply(inst, RecordLatheRecipe::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, RecordLatheRecipe> STREAM_CODEC =
+                StreamCodec.composite(
+                        Ingredient.CONTENTS_STREAM_CODEC, RecordLatheRecipe::inputItem,
+                        ItemStack.STREAM_CODEC, RecordLatheRecipe::output,
+                        RecordLatheRecipe::new);
 
         @Override
-        public RecordLatheRecipe fromJson(ResourceLocation recipeId, JsonObject serializedRecipe) {
-            ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "output"));
-
-            JsonArray ingredients = GsonHelper.getAsJsonArray(serializedRecipe, "ingredients");
-            NonNullList<Ingredient> inputs = NonNullList.withSize(ingredients.size(), Ingredient.EMPTY);
-
-            for (int i = 0; i < ingredients.size(); i++) {
-                inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
-            }
-
-            return new RecordLatheRecipe(inputs, output, recipeId);
+        public MapCodec<RecordLatheRecipe> codec() {
+            return CODEC;
         }
 
         @Override
-        public RecordLatheRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-
-            int ingredientCount = pBuffer.readInt();
-
-            NonNullList<Ingredient> inputs = NonNullList.withSize(ingredientCount, Ingredient.EMPTY);
-            for (int i = 0; i < ingredientCount; i++) {
-                inputs.set(i, Ingredient.fromNetwork(pBuffer));
-            }
-
-            ItemStack output = pBuffer.readItem();
-            return new RecordLatheRecipe(inputs, output, pRecipeId);
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf pBuffer, RecordLatheRecipe pRecipe) {
-            pBuffer.writeInt(pRecipe.getIngredients().size());
-
-            for (Ingredient ingredient : pRecipe.getIngredients()) {
-                ingredient.toNetwork(pBuffer);
-            }
-
-            pBuffer.writeItemStack(pRecipe.getResultItem(null), false);
+        public StreamCodec<RegistryFriendlyByteBuf, RecordLatheRecipe> streamCodec() {
+            return STREAM_CODEC;
         }
     }
 }

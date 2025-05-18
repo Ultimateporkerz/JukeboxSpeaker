@@ -7,10 +7,12 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.client.screen.RecordLatheStationScreen;
 import net.ultimporks.betterdiscs.client.screen.RecordPressStationScreen;
+import net.ultimporks.betterdiscs.init.ModRecipes;
 import net.ultimporks.betterdiscs.recipe.RecordLatheRecipe;
 import net.ultimporks.betterdiscs.recipe.RecordPressRecipe;
 
@@ -20,7 +22,7 @@ import java.util.List;
 public class JEIBetterDiscsPlugin implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(Reference.MOD_ID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "jei_plugin");
     }
 
     @Override
@@ -34,10 +36,12 @@ public class JEIBetterDiscsPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
-        List<RecordPressRecipe> pressRecipes = recipeManager.getAllRecipesFor(RecordPressRecipe.Type.INSTANCE);
+        List<RecordPressRecipe> pressRecipes = recipeManager
+                .getAllRecipesFor(ModRecipes.RECORD_PRESS_TYPE.get()).stream().map(RecipeHolder::value).toList();
         registration.addRecipes(RecordPressCategory.RECORD_PRESS_RECIPE_TYPE, pressRecipes);
 
-        List<RecordLatheRecipe> latheRecipes = recipeManager.getAllRecipesFor(RecordLatheRecipe.Type.INSTANCE);
+        List<RecordLatheRecipe> latheRecipes = recipeManager
+                .getAllRecipesFor(ModRecipes.RECORD_LATHE_TYPE.get()).stream().map(RecipeHolder::value).toList();
         registration.addRecipes(RecordLatheCategory.RECORD_LATHE_RECIPE_TYPE, latheRecipes);
     }
 

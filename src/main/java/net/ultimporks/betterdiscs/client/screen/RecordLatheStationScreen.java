@@ -19,7 +19,7 @@ import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class RecordLatheStationScreen extends AbstractContainerScreen<RecordLatheStationMenu> {
-    private static final ResourceLocation CRAFT_VANILLA = new ResourceLocation(Reference.MOD_ID, "textures/gui/record_lathe_station_gui.png");
+    private static final ResourceLocation CRAFT_VANILLA = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/record_lathe_station_gui.png");
 
     private float scrollOffs;
     private boolean scrolling;
@@ -173,7 +173,6 @@ public class RecordLatheStationScreen extends AbstractContainerScreen<RecordLath
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTooltip(guiGraphics, mouseX, mouseY);
     }

@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -57,10 +58,14 @@ public class SpeakerBlock extends BaseEntityBlock {
 
         return 0;
     }
-    public boolean hasAnalogOutputSignal(BlockState pState) {
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState pState) {
         return true;
     }
-    public int getAnalogOutputSignal(BlockState pBlockState, Level pLevel, BlockPos pPos) {
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState pState, Level pLevel, BlockPos pPos) {
         return pLevel.getBlockEntity(pPos) instanceof SpeakerBlockEntity speakerBlockEntity ? speakerBlockEntity.getComparatorOutput() : 0;
     }
 
@@ -110,6 +115,6 @@ public class SpeakerBlock extends BaseEntityBlock {
             return null;
         }
         return createTickerHelper(pBlockEntityType, ModBlockEntities.SPEAKER_BE.get(),
-                (level1, pos, state1, blockEntity) -> blockEntity.tick(level1, pos, state1, blockEntity));
+                (level1, pos, state1, blockEntity) -> blockEntity.tick(level1, pos, state1));
     }
 }

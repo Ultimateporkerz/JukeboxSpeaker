@@ -13,7 +13,7 @@ import net.ultimporks.betterdiscs.util.menus.RecordPressStationMenu;
 @OnlyIn(Dist.CLIENT)
 public class RecordPressStationScreen extends AbstractContainerScreen<RecordPressStationMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Reference.MOD_ID, "textures/gui/record_press_station_gui.png");
+            ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/record_press_station_gui.png");
 
     public RecordPressStationScreen(RecordPressStationMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -43,7 +43,6 @@ public class RecordPressStationScreen extends AbstractContainerScreen<RecordPres
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTooltip(guiGraphics, mouseX, mouseY);
     }

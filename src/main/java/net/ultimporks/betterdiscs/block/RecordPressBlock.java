@@ -29,7 +29,7 @@ import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import java.util.List;
 
 public class RecordPressBlock extends BaseEntityBlock {
-    public static final MapCodec<RecordPressBlock> CODEC1 = simpleCodec(props -> new RecordPressBlock(props, ModBlockEntities.RECORD_PRESS_BE::get));
+    public static final MapCodec<RecordPressBlock> CODEC1 = simpleCodec(RecordPressBlock::new);
 
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 10, 16);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;

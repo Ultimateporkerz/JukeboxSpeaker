@@ -14,7 +14,7 @@ import net.ultimporks.betterdiscs.util.menus.JukeboxMenu;
 import org.jetbrains.annotations.NotNull;
 
 public class JukeblockScreen extends AbstractContainerScreen<JukeboxMenu> {
-    private static final ResourceLocation JUKEBOX_SCREEN = new ResourceLocation(Reference.MOD_ID, "textures/gui/jukebox_gui.png");
+    private static final ResourceLocation JUKEBOX_SCREEN = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jukebox_gui.png");
 
     private int sliderX;
     private int sliderY;
@@ -51,7 +51,6 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeboxMenu> {
         this.playing = menu.isPlayingMusic();
         this.stopped = menu.isMusicStopped();
 
-        renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTooltip(guiGraphics, mouseX, mouseY);
         renderHoverText(guiGraphics, mouseX, mouseY);
@@ -71,7 +70,7 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeboxMenu> {
 
             int newVolume = getNewVolume();
             C2SSyncVolumeMessage message = new C2SSyncVolumeMessage(newVolume, menu.getJukeblockPos());
-            ModMessages.getPlayChannel().sendToServer(message);
+            ModMessages.sendToServer(message);
             return true;
         }
         return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
@@ -185,10 +184,10 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeboxMenu> {
         if (isWithinBounds(mouseX, mouseY, x + 8, y + 64, 12, 11)) {
             if (particlesEnabled) {
                 // Disable
-                ModMessages.getPlayChannel().sendToServer(new C2SSyncParticleMessage(false, menu.getJukeblockPos()));
+                ModMessages.sendToServer(new C2SSyncParticleMessage(false, menu.getJukeblockPos()));
             } else {
                 // Enable
-                ModMessages.getPlayChannel().sendToServer(new C2SSyncParticleMessage(true, menu.getJukeblockPos()));
+                ModMessages.sendToServer(new C2SSyncParticleMessage(true, menu.getJukeblockPos()));
             }
             return true;
         }
@@ -196,7 +195,7 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeboxMenu> {
         // Play
         if (isWithinBounds(mouseX, mouseY, x + 42, y + 51, 35, 12)) {
             if (!playing) {
-                ModMessages.getPlayChannel().sendToServer(new C2SSyncPlayButtonMessage(menu.getJukeblockPos()));
+                ModMessages.sendToServer(new C2SSyncPlayButtonMessage(menu.getJukeblockPos()));
                 return true;
             }
         }
@@ -204,7 +203,7 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeboxMenu> {
         // Stop
         if (isWithinBounds(mouseX, mouseY, x + 97, y + 51, 35, 12)) {
             if (!stopped) {
-                ModMessages.getPlayChannel().sendToServer(new C2SSyncStopButtonMessage(menu.getJukeblockPos()));
+                ModMessages.sendToServer(new C2SSyncStopButtonMessage(menu.getJukeblockPos()));
                 return true;
             }
         }

@@ -15,7 +15,7 @@ import net.ultimporks.betterdiscs.util.menus.SpeakerMenus;
 
 @OnlyIn(Dist.CLIENT)
 public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
-    private static final ResourceLocation SPEAKER_SCREEN = new ResourceLocation(Reference.MOD_ID, "textures/gui/speakers_gui.png");
+    private static final ResourceLocation SPEAKER_SCREEN = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/speakers_gui.png");
 
     private int sliderX;
     private int sliderY;
@@ -46,7 +46,6 @@ public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
     public void render(GuiGraphics pGuiGraphics, int mouseX, int mouseY, float pPartialTick) {
         this.particlesEnabled = menu.areParticlesEnabled();
 
-        renderBackground(pGuiGraphics);
         super.render(pGuiGraphics, mouseX, mouseY, pPartialTick);
         renderTooltip(pGuiGraphics, mouseX, mouseY);
         renderHoverText(pGuiGraphics, mouseX, mouseY);
@@ -66,7 +65,7 @@ public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
 
             int newVolume = getNewVolume();
             C2SSyncVolumeMessage message = new C2SSyncVolumeMessage(newVolume, menu.getSpeakerPos());
-            ModMessages.getPlayChannel().sendToServer(message);
+            ModMessages.sendToServer(message);
             return true;
         }
         return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
@@ -149,10 +148,10 @@ public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
         if (isWithinBounds(mouseX, mouseY, this.leftPos + 17, this.topPos + 12, 12, 12)) {
             if (particlesEnabled) {
                 // Disable
-                ModMessages.getPlayChannel().sendToServer(new C2SSyncParticleMessage(false, menu.getSpeakerPos()));
+                ModMessages.sendToServer(new C2SSyncParticleMessage(false, menu.getSpeakerPos()));
             } else {
                 // Enable
-                ModMessages.getPlayChannel().sendToServer(new C2SSyncParticleMessage(true, menu.getSpeakerPos()));
+                ModMessages.sendToServer(new C2SSyncParticleMessage(true, menu.getSpeakerPos()));
             }
             return true;
         }

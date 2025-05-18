@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -17,26 +16,28 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.JukeboxSongPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.init.ModBlockEntities;
+import net.ultimporks.betterdiscs.init.ModBlocks;
+import net.ultimporks.betterdiscs.util.SpeakerLinkUtil;
 import net.ultimporks.betterdiscs.util.menus.SpeakerMenus;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     private long ticksSinceSongStarted;
     @Nullable
-    public Holder<JukeboxSong> song;
-    private ItemStack item = ItemStack.EMPTY;
+    private Holder<JukeboxSong> song;
+    private ItemStack currentDisc = ItemStack.EMPTY;
     private final JukeboxSongPlayer jukeblockSongPlayer = new JukeboxSongPlayer(this::onSongChanged, this.getBlockPos());
 
     // Playing music
@@ -44,9 +45,6 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     private boolean isPaused = false;
     public BlockPos linkedJukeboxPos;
 
-
-
-    public ItemStack currentDisc;
     // Volume Control
     private int volume = 100;
     // Particle Control
@@ -83,14 +81,11 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
         };
     }
 
-
-
-    /*
     public void tick(Level level, BlockPos pos, BlockState state) {
         if (this.isRemoved()) return;
         ++this.ticksSinceSongStarted;
         if (this.isPlaying && !this.isPaused && currentDisc != null) {
-            if (this.shouldRecordStopPlaying(recordItem)) {
+            if (this.song.value().hasFinished(this.ticksSinceSongStarted)) {
                 SpeakerLinkUtil.deactivateSpeakerJukebox(level, this.getBlockPos());
             } else if (this.shouldSendSpeakerPlayingEvent() && !getBlockState().is(ModBlocks.CEILING_SPEAKER.get())) {
                 this.ticksSinceSongStarted = 0;
@@ -102,7 +97,6 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
         }
         ++this.tickCount;
     }
-     */
 
     public boolean isPaused() {
         return isPaused;
@@ -110,14 +104,6 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     public boolean isPlaying() {
         return isPlaying;
     }
-    public Item getCurrentDisc() {
-        if (currentDisc != null && !currentDisc.isEmpty()) {
-            return currentDisc.getItem();
-        }
-        return ItemStack.EMPTY.getItem();
-    }
-
-
     private boolean shouldSendSpeakerPlayingEvent() {
         return this.ticksSinceSongStarted % 20L == 0L;
     }
@@ -182,61 +168,51 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
         return particlesNumber == 200;
     }
 
-    public int getComparatorOutput() {
-        return JukeboxSong.fromStack(this.level.registryAccess(), this.item).map(Holder::value).map(JukeboxSong::comparatorOutput).orElse(0);
-    }
 
-
-    public static void tick(Level pLevel, BlockPos pPos, BlockState pState, SpeakerBlockEntity pJukebox) {
-        pJukebox.jukeblockSongPlayer.tick(pLevel, pState);
-    }
-
-    public void setActive(LevelAccessor pLevel, Holder<JukeboxSong> song) {
-        this.song = song;
+    public void setActive(boolean active, ItemStack currentDisc) {
+        this.isPlaying = active;
+        this.isPaused = false;
+        this.currentDisc = currentDisc;
         this.ticksSinceSongStarted = 0L;
-        int i = pLevel.registryAccess().registryOrThrow(Registries.JUKEBOX_SONG).getId(this.song.value());
-
+        this.setChanged();
+        this.level.updateNeighborsAt(getBlockPos(), level.getBlockState(getBlockPos()).getBlock());
+        // sets the Song
+        Optional<Holder<JukeboxSong>> optional = JukeboxSong.fromStack(this.level.registryAccess(), this.currentDisc);
+        this.song = optional.get();
     }
-
     public void onSongChanged() {
         this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
         this.setChanged();
     }
 
-    /* DEPRECIATED
-    public void setActive(boolean active, ItemStack disc) {
-        this.recordStartedTick = this.tickCount;
-        this.currentDisc = disc;
-        this.isPlaying = active;
-        this.isPaused = false;
-        this.setChanged();
-        assert this.level != null;
-        this.level.updateNeighborsAt(getBlockPos(), level.getBlockState(getBlockPos()).getBlock());
-    }
-     */
 
     // Menus
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, Player pPlayer) {
         return new SpeakerMenus(pContainerId, pPlayerInventory, this, this.data);
+    }
+
+    public int getComparatorOutput() {
+        return JukeboxSong.fromStack(this.level.registryAccess(), this.currentDisc).map(Holder::value).map(JukeboxSong::comparatorOutput).orElse(0);
     }
 
     // Block Data
     @Override
-    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+    public void loadAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
         super.loadAdditional(pTag, pRegistries);
         if (pTag.contains("LinkedJukebox")) {
-            this.linkedJukeboxPos = NbtUtils.readBlockPos(pTag.getCompound("LinkedJukebox"));
+            this.linkedJukeboxPos = NbtUtils.readBlockPos(pTag, "LinkedJukebox").orElse(null);
+        } else {
+            this.linkedJukeboxPos = null;
         }
         this.isPlaying = pTag.getBoolean("isPlaying");
         this.volume = pTag.getInt("Volume");
         this.particlesEnabled = pTag.getInt("ParticlesActive");
         this.ticksSinceSongStarted = pTag.getLong("RecordStartTick");
         this.tickCount = pTag.getLong("TickCount");
-
     }
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
         super.saveAdditional(pTag, pRegistries);
         if (linkedJukeboxPos != null) {
             pTag.put("LinkedJukebox", NbtUtils.writeBlockPos(this.linkedJukeboxPos));
@@ -251,14 +227,12 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
-
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider pRegistries) {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries) {
         return saveWithoutMetadata(pRegistries);
     }
     @Override
-    public Component getDisplayName() {
+    public @NotNull Component getDisplayName() {
         return Component.translatable("block.betterdiscs.speaker");
     }
-
 }

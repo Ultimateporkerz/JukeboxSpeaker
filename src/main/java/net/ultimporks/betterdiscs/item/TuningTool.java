@@ -19,7 +19,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
+import net.ultimporks.betterdiscs.init.ModDataComponents;
 import net.ultimporks.betterdiscs.util.SpeakerLinkUtil;
+import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +55,6 @@ public class TuningTool extends Item {
                 return InteractionResult.SUCCESS;
             }
         }
-
         // Handle Jukebox Interaction
         if (blockEntity instanceof JukeboxBlockEntity) {
             if (handleJukeboxEntity(player, blockPos, level, tuningTool)) {
@@ -260,135 +261,77 @@ public class TuningTool extends Item {
 
     // Speaker Tag methods
     public static void saveSpeakerPosToTag(ItemStack tuningTool, BlockPos clickedPos) {
-        int x = clickedPos.getX();
-        int y = clickedPos.getY();
-        int z = clickedPos.getZ();
-
-        CompoundTag speakerData = tuningTool.getOrCreateTag();
-
-        speakerData.putInt("SpeakerPosX", x);
-        speakerData.putInt("SpeakerPosY", y);
-        speakerData.putInt("SpeakerPosZ", z);
-
-        tuningTool.setTag(speakerData);
+        tuningTool.set(ModDataComponents.SPEAKER_POS.get(), clickedPos);
     }
     public static boolean hasSpeakerTags(ItemStack tuningTool) {
-        CompoundTag speakerData = tuningTool.getOrCreateTag();
-        return speakerData.contains("SpeakerPosX") && speakerData.contains("SpeakerPosY") && speakerData.contains("SpeakerPosZ");
+        BlockPos savedBlockPos = tuningTool.get(ModDataComponents.SPEAKER_POS.get());
+        BetterMusicDiscs.generalLOGGING("Saved Block Pos: " + savedBlockPos);
+        return savedBlockPos != null;
     }
     public static BlockPos getSpeakerPosFromTag(ItemStack tuningTool) {
-        CompoundTag speakerData = tuningTool.getOrCreateTag();
-
-        int x = speakerData.getInt("SpeakerPosX");
-        int y = speakerData.getInt("SpeakerPosY");
-        int z = speakerData.getInt("SpeakerPosZ");
-        return new BlockPos(x, y, z);
+        BlockPos speakerPos = tuningTool.get(ModDataComponents.SPEAKER_POS.get());
+        assert speakerPos != null;
+        return new BlockPos(speakerPos);
     }
     public static boolean removeSpeakerTags(ItemStack tuningTool) {
-        CompoundTag speakerData = tuningTool.getOrCreateTag();
-        speakerData.remove("SpeakerPosX");
-        speakerData.remove("SpeakerPosY");
-        speakerData.remove("SpeakerPosZ");
+        tuningTool.remove(ModDataComponents.SPEAKER_POS.get());
         return true;
     }
 
     // Jukeblock Tag methods
     public static void saveJukeblockPosToTag(ItemStack tuningTool, BlockPos clickedPos) {
-        int x = clickedPos.getX();
-        int y = clickedPos.getY();
-        int z = clickedPos.getZ();
-
-        CompoundTag jukeblockData = tuningTool.getOrCreateTag();
-
-        jukeblockData.putInt("jukeblockPosX", x);
-        jukeblockData.putInt("jukeblockPosY", y);
-        jukeblockData.putInt("jukeblockPosZ", z);
-
-        tuningTool.setTag(jukeblockData);
+        tuningTool.set(ModDataComponents.JUKEBLOCK_POS.get(), clickedPos);
     }
     public static boolean hasJukeblockTags(ItemStack tuningTool) {
-        CompoundTag jukeblockData = tuningTool.getOrCreateTag();
-        return jukeblockData.contains("jukeblockPosX") && jukeblockData.contains("jukeblockPosY") && jukeblockData.contains("jukeblockPosZ");
+        BlockPos savedBlockPos = tuningTool.get(ModDataComponents.JUKEBLOCK_POS.get());
+        BetterMusicDiscs.generalLOGGING("Saved Block Pos: " + savedBlockPos);
+        return savedBlockPos != null;
     }
     public static BlockPos getJukeblockPosFromTag(ItemStack tuningTool) {
-        CompoundTag jukeblockData = tuningTool.getOrCreateTag();
-
-        int x = jukeblockData.getInt("jukeblockPosX");
-        int y = jukeblockData.getInt("jukeblockPosY");
-        int z = jukeblockData.getInt("jukeblockPosZ");
-        return new BlockPos(x, y, z);
+        BlockPos jukeblockPos = tuningTool.get(ModDataComponents.JUKEBLOCK_POS.get());
+        assert jukeblockPos != null;
+        return new BlockPos(jukeblockPos);
     }
     public static boolean removeJukeblockTags(ItemStack tuningTool) {
-        CompoundTag jukeblockData = tuningTool.getOrCreateTag();
-        jukeblockData.remove("jukeblockPosX");
-        jukeblockData.remove("jukeblockPosY");
-        jukeblockData.remove("jukeblockPosZ");
+        tuningTool.remove(ModDataComponents.JUKEBLOCK_POS.get());
         return true;
     }
 
     // Jukebox Tag methods
     public static void saveJukeboxPosToTag(ItemStack tuningTool, BlockPos clickedPos) {
-        int x = clickedPos.getX();
-        int y = clickedPos.getY();
-        int z = clickedPos.getZ();
-
-        CompoundTag jukeboxData = tuningTool.getOrCreateTag();
-
-        jukeboxData.putInt("jukeboxPosX", x);
-        jukeboxData.putInt("jukeboxPosY", y);
-        jukeboxData.putInt("jukeboxPosZ", z);
-
-        tuningTool.setTag(jukeboxData);
+        tuningTool.set(ModDataComponents.JUKEBOX_POS.get(), clickedPos);
     }
     public static boolean hasJukeboxTags(ItemStack tuningTool) {
-        CompoundTag jukeboxData = tuningTool.getOrCreateTag();
-        return jukeboxData.contains("jukeboxPosX") && jukeboxData.contains("jukeboxPosY") && jukeboxData.contains("jukeboxPosZ");
+        BlockPos savedBlockPos = tuningTool.get(ModDataComponents.JUKEBOX_POS.get());
+        BetterMusicDiscs.generalLOGGING("Saved Block Pos: " + savedBlockPos);
+        return savedBlockPos != null;
     }
     public static BlockPos getJukeboxPosFromTag(ItemStack tuningTool) {
-        CompoundTag jukeboxData = tuningTool.getOrCreateTag();
-
-        int x = jukeboxData.getInt("jukeboxPosX");
-        int y = jukeboxData.getInt("jukeboxPosY");
-        int z = jukeboxData.getInt("jukeboxPosZ");
-        return new BlockPos(x, y, z);
+        BlockPos jukeboxPos = tuningTool.get(ModDataComponents.JUKEBOX_POS.get());
+        assert jukeboxPos != null;
+        return new BlockPos(jukeboxPos);
     }
     public static boolean removeJukeboxTags(ItemStack tuningTool) {
-        CompoundTag jukeboxData = tuningTool.getOrCreateTag();
-        jukeboxData.remove("jukeboxPosX");
-        jukeboxData.remove("jukeboxPosY");
-        jukeboxData.remove("jukeboxPosZ");
+        tuningTool.remove(ModDataComponents.JUKEBOX_POS.get());
         return true;
     }
 
     // NoteBlock Tag methods
     public static void saveNoteBlockPosToTag(ItemStack tuningTool, BlockPos clickedPos) {
-        int x = clickedPos.getX();
-        int y = clickedPos.getY();
-        int z = clickedPos.getZ();
-
-        CompoundTag noteblockData = tuningTool.getOrCreateTag();
-
-        noteblockData.putInt("NoteBlockPosX", x);
-        noteblockData.putInt("NoteBlockPosY", y);
-        noteblockData.putInt("NoteBlockPosZ", z);
+        tuningTool.set(ModDataComponents.NOTEBLOCK_POS.get(), clickedPos);
     }
     public static boolean hasNoteBlockTags(ItemStack tuningTool) {
-        CompoundTag noteblockData = tuningTool.getOrCreateTag();
-        return noteblockData.contains("NoteBlockPosX") && noteblockData.contains("NoteBlockPosY") && noteblockData.contains("NoteBlockPosZ");
+        BlockPos savedBlockPos = tuningTool.get(ModDataComponents.NOTEBLOCK_POS.get());
+        BetterMusicDiscs.generalLOGGING("Saved Block Pos: " + savedBlockPos);
+        return savedBlockPos != null;
     }
     public static BlockPos getNoteBlockPosFromTag(ItemStack tuningTool) {
-        CompoundTag noteblockData = tuningTool.getOrCreateTag();
-
-        int x = noteblockData.getInt("NoteBlockPosX");
-        int y = noteblockData.getInt("NoteBlockPosY");
-        int z = noteblockData.getInt("NoteBlockPosZ");
-        return new BlockPos(x, y, z);
+        BlockPos noteblockPos = tuningTool.get(ModDataComponents.NOTEBLOCK_POS.get());
+        assert noteblockPos != null;
+        return new BlockPos(noteblockPos);
     }
     public static boolean removeNoteBlockTags(ItemStack tuningTool) {
-        CompoundTag noteblockData = tuningTool.getOrCreateTag();
-        noteblockData.remove("NoteBlockPosX");
-        noteblockData.remove("NoteBlockPosY");
-        noteblockData.remove("NoteBlockPosZ");
+        tuningTool.remove(ModDataComponents.NOTEBLOCK_POS.get());
         return true;
     }
 

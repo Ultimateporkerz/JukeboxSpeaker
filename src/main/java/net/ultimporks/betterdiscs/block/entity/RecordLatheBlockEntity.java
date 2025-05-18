@@ -2,6 +2,7 @@ package net.ultimporks.betterdiscs.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -16,6 +17,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +28,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.init.ModBlockEntities;
+import net.ultimporks.betterdiscs.init.ModRecipes;
 import net.ultimporks.betterdiscs.recipe.RecordLatheRecipe;
+import net.ultimporks.betterdiscs.recipe.RecordLatheRecipeInput;
 import net.ultimporks.betterdiscs.util.menus.RecordLatheStationMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,14 +97,13 @@ public class RecordLatheBlockEntity extends BlockEntity implements MenuProvider 
         }
     }
 
-
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries) {
+        return saveWithoutMetadata(pRegistries);
     }
     @Override
     public Component getDisplayName() {
@@ -128,18 +131,18 @@ public class RecordLatheBlockEntity extends BlockEntity implements MenuProvider 
         lazyItemHandler.invalidate();
     }
     @Override
-    protected void saveAdditional(CompoundTag pTag) {
-        pTag.put("inventory", itemHandler.serializeNBT());
+    protected void saveAdditional(CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
+        pTag.put("inventory", itemHandler.serializeNBT(pRegistries));
         pTag.putInt("record_lathe_progress", progress);
         pTag.putInt("selected_item_index", selectedItemIndex);
-        super.saveAdditional(pTag);
+        super.saveAdditional(pTag, pRegistries);
     }
     @Override
-    public void load(CompoundTag pTag) {
-        itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+    public void loadAdditional(CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
+        itemHandler.deserializeNBT(pRegistries, pTag.getCompound("inventory"));
         progress = pTag.getInt("record_lathe_progress");
         selectedItemIndex = pTag.getInt("selected_item_index");
-        super.load(pTag);
+        super.loadAdditional(pTag, pRegistries);
     }
 
     public void drops()  {
@@ -148,6 +151,17 @@ public class RecordLatheBlockEntity extends BlockEntity implements MenuProvider 
             inventory.setItem(i, itemHandler.getStackInSlot(i));
         }
         Containers.dropContents(this.level, this.worldPosition, inventory);
+    }
+
+    private void resetProgress() {
+        progress = 0;
+        this.setSelectedItemIndex(-1);
+    }
+    private boolean hasProgressFinished() {
+        return progress >= maxProgress;
+    }
+    private void increaseCraftingProgress() {
+        progress++;
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
@@ -163,71 +177,47 @@ public class RecordLatheBlockEntity extends BlockEntity implements MenuProvider 
             resetProgress();
         }
     }
-    public boolean slotHasItem() {
-        return !this.itemHandler.getStackInSlot(0).isEmpty();
-    }
-    private void resetProgress() {
-        progress = 0;
-        this.setSelectedItemIndex(-1);
-    }
     private void craftItem() {
-        Optional<RecordLatheRecipe> recipeOpt = getCurrentRecipe();
+        Optional<RecipeHolder<RecordLatheRecipe>> recipe = getCurrentRecipe();
+        ItemStack output = recipe.get().value().output();
 
-        if (recipeOpt.isPresent()) {
-            RecordLatheRecipe recipe = recipeOpt.get();
-            ItemStack result = recipe.getResultItem(null);
-
-            BetterMusicDiscs.generalLOGGING("(RecordLatheBlockEntity) - SelectedItemIndex: " + selectedItemIndex + " Associated Item: " + result.getItem().getDescriptionId() + " Recipe ID: " + recipe.getId());
-
-            this.itemHandler.extractItem(INPUT_SLOT, 1, false);
-
-            // Check if the output slot is empty or the correct item can be inserted
-            if (this.itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty()) {
-                this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(), result.getCount()));
-            } else if (this.itemHandler.getStackInSlot(OUTPUT_SLOT).is(result.getItem())) {
-                this.itemHandler.getStackInSlot(OUTPUT_SLOT).grow(result.getCount());
-            }
-
-        } else {
-            BetterMusicDiscs.generalLOGGING("(RecordLatheBlockEntity) - No valid recipe found for crafting");
-        }
+        itemHandler.extractItem(INPUT_SLOT, 1, false);
+        itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(output.getItem(),
+                itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + output.getCount()));
     }
     private boolean hasRecipe() {
-        Optional<RecordLatheRecipe> recipe = getCurrentRecipe();
-
+        Optional<RecipeHolder<RecordLatheRecipe>> recipe = getCurrentRecipe();
         if(recipe.isEmpty()) {
             return false;
         }
 
-        ItemStack result = recipe.get().getResultItem(this.level.registryAccess());
-
-        return canInsertAmountIntoOutputSlot(result.getCount()) && canInsertItemIntoOutputSlot(result.getItem());
+        ItemStack output = recipe.get().value().output();
+        return canInsertItemIntoOutputSlot(output) && canInsertAmountIntoOutputSlot(output.getCount());
     }
-    private Optional<RecordLatheRecipe> getCurrentRecipe() {
-        List<RecordLatheRecipe> recipes = getRecipes();
-
-        if (selectedItemIndex >= 0 && selectedItemIndex < recipes.size()) {
-            return Optional.of(recipes.get(selectedItemIndex));
-        }
-        return Optional.empty();
+    public boolean slotHasItem() {
+        return !this.itemHandler.getStackInSlot(0).isEmpty();
     }
-    private boolean hasProgressFinished() {
-        return progress >= maxProgress;
-    }
-    private void increaseCraftingProgress() {
-        progress++;
+    private Optional<RecipeHolder<RecordLatheRecipe>> getCurrentRecipe() {
+        return this.level.getRecipeManager()
+                .getRecipeFor(ModRecipes.RECORD_LATHE_TYPE.get(), new RecordLatheRecipeInput(itemHandler.getStackInSlot(INPUT_SLOT)), level);
     }
 
-    private boolean canInsertItemIntoOutputSlot(Item item) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty() || this.itemHandler.getStackInSlot(OUTPUT_SLOT).is(item);
+    private boolean canInsertItemIntoOutputSlot(ItemStack output) {
+        return itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty() || this.itemHandler.getStackInSlot(OUTPUT_SLOT).getItem() == output.getItem();
     }
     private boolean canInsertAmountIntoOutputSlot(int count) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + count <= this.itemHandler.getStackInSlot(OUTPUT_SLOT).getMaxStackSize();
+        int maxCount = itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty() ? 64 : itemHandler.getStackInSlot(OUTPUT_SLOT).getMaxStackSize();
+        int currentCount = itemHandler.getStackInSlot(OUTPUT_SLOT).getCount();
+
+        return maxCount >= currentCount + count;
     }
     public List<RecordLatheRecipe> getRecipes() {
-        List<RecordLatheRecipe> recipes = new ArrayList<>(this.level.getRecipeManager().getAllRecipesFor(RecordLatheRecipe.Type.INSTANCE));
-        recipes.sort(Comparator.comparing(r -> r.getId().toString()));
-        return recipes;
+        return this.level.getRecipeManager()
+                .getAllRecipesFor(ModRecipes.RECORD_LATHE_TYPE.get())
+                .stream()
+                .map(RecipeHolder::value)
+                .sorted(Comparator.comparing(r -> r.getType().toString()))
+                .toList();
     }
     public void setSelectedItemIndex(int index) {
         this.selectedItemIndex = index;

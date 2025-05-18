@@ -29,7 +29,7 @@ import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import java.util.List;
 
 public class RecordLatheBlock extends BaseEntityBlock {
-    public static final MapCodec<RecordLatheBlock> CODEC1 = simpleCodec(props -> new RecordLatheBlock(props, ModBlockEntities.RECORD_LATHE_BE::get));
+    public static final MapCodec<RecordLatheBlock> CODEC1 = simpleCodec(RecordLatheBlock::new);
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 10, 16);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 

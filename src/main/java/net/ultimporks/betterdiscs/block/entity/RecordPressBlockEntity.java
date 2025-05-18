@@ -2,6 +2,7 @@ package net.ultimporks.betterdiscs.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -16,6 +17,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,7 +27,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.ultimporks.betterdiscs.init.ModBlockEntities;
+import net.ultimporks.betterdiscs.init.ModRecipes;
+import net.ultimporks.betterdiscs.recipe.RecordLatheRecipe;
+import net.ultimporks.betterdiscs.recipe.RecordLatheRecipeInput;
 import net.ultimporks.betterdiscs.recipe.RecordPressRecipe;
+import net.ultimporks.betterdiscs.recipe.RecordPressRecipeInput;
 import net.ultimporks.betterdiscs.util.menus.RecordPressStationMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,14 +84,13 @@ public class RecordPressBlockEntity extends BlockEntity implements MenuProvider 
         }
     }
 
-
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries) {
+        return saveWithoutMetadata(pRegistries);
     }
     @Override
     public Component getDisplayName() {
@@ -113,16 +118,16 @@ public class RecordPressBlockEntity extends BlockEntity implements MenuProvider 
         lazyItemHandler.invalidate();
     }
     @Override
-    protected void saveAdditional(CompoundTag pTag) {
-        pTag.put("inventory", itemHandler.serializeNBT());
+    protected void saveAdditional(CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
+        pTag.put("inventory", itemHandler.serializeNBT(pRegistries));
         pTag.putInt("record_press_progress", progress);
-        super.saveAdditional(pTag);
+        super.saveAdditional(pTag, pRegistries);
     }
     @Override
-    public void load(CompoundTag pTag) {
-        itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+    public void loadAdditional(CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
+        itemHandler.deserializeNBT(pRegistries, pTag.getCompound("inventory"));
         progress = pTag.getInt("record_press_progress");
-        super.load(pTag);
+        super.loadAdditional(pTag, pRegistries);
     }
 
     public void drops()  {
@@ -131,6 +136,16 @@ public class RecordPressBlockEntity extends BlockEntity implements MenuProvider 
             inventory.setItem(i, itemHandler.getStackInSlot(i));
         }
         Containers.dropContents(this.level, this.worldPosition, inventory);
+    }
+
+    private void resetProgress() {
+        progress = 0;
+    }
+    private boolean hasProgressFinished() {
+        return progress >= maxProgress;
+    }
+    private void increaseCraftingProgress() {
+        progress++;
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
@@ -146,47 +161,35 @@ public class RecordPressBlockEntity extends BlockEntity implements MenuProvider 
             resetProgress();
         }
     }
-    private void resetProgress() {
-        progress = 0;
-    }
     private void craftItem() {
-        Optional<RecordPressRecipe> recipe = getCurrentRecipe();
-        ItemStack result = recipe.get().getResultItem(null);
+        Optional<RecipeHolder<RecordPressRecipe>> recipe = getCurrentRecipe();
+        ItemStack output = recipe.get().value().output();
 
-        this.itemHandler.extractItem(INPUT_SLOT, 1, false);
-
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(result.getItem(),
-                this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + result.getCount()));
-    }
-    private boolean hasProgressFinished() {
-        return progress >= maxProgress;
-    }
-    private void increaseCraftingProgress() {
-        progress++;
+        itemHandler.extractItem(INPUT_SLOT, 1, false);
+        itemHandler.setStackInSlot(OUTPUT_SLOT, new ItemStack(output.getItem(),
+                itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + output.getCount()));
     }
     private boolean hasRecipe() {
-        Optional<RecordPressRecipe> recipe = getCurrentRecipe();
-
-        if (recipe.isEmpty()) {
+        Optional<RecipeHolder<RecordPressRecipe>> recipe = getCurrentRecipe();
+        if(recipe.isEmpty()) {
             return false;
         }
 
-        ItemStack result = recipe.get().getResultItem(null);
-
-        return canInsertAmountIntoOutputSlot(result.getCount()) && canInsertItemIntoOutputSlot(result.getItem());
+        ItemStack output = recipe.get().value().output();
+        return canInsertItemIntoOutputSlot(output) && canInsertAmountIntoOutputSlot(output.getCount());
     }
-    private Optional<RecordPressRecipe> getCurrentRecipe() {
-        SimpleContainer inventory = new SimpleContainer(this.itemHandler.getSlots());
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            inventory.setItem(i, this.itemHandler.getStackInSlot(i));
-        }
-
-        return this.level.getRecipeManager().getRecipeFor(RecordPressRecipe.Type.INSTANCE, inventory, level);
+    private Optional<RecipeHolder<RecordPressRecipe>> getCurrentRecipe() {
+        return this.level.getRecipeManager()
+                .getRecipeFor(ModRecipes.RECORD_PRESS_TYPE.get(), new RecordPressRecipeInput(itemHandler.getStackInSlot(INPUT_SLOT)), level);
     }
-    private boolean canInsertItemIntoOutputSlot(Item item) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty() || this.itemHandler.getStackInSlot(OUTPUT_SLOT).is(item);
+
+    private boolean canInsertItemIntoOutputSlot(ItemStack output) {
+        return itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty() || this.itemHandler.getStackInSlot(OUTPUT_SLOT).getItem() == output.getItem();
     }
     private boolean canInsertAmountIntoOutputSlot(int count) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT).getCount() + count <= this.itemHandler.getStackInSlot(OUTPUT_SLOT).getMaxStackSize();
+        int maxCount = itemHandler.getStackInSlot(OUTPUT_SLOT).isEmpty() ? 64 : itemHandler.getStackInSlot(OUTPUT_SLOT).getMaxStackSize();
+        int currentCount = itemHandler.getStackInSlot(OUTPUT_SLOT).getCount();
+
+        return maxCount >= currentCount + count;
     }
 }

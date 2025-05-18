@@ -25,7 +25,7 @@ import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import net.ultimporks.betterdiscs.item.TuningTool;
 
 public class JukeblockBlock extends BaseEntityBlock {
-    public static final MapCodec<JukeblockBlock> CODEC1 = simpleCodec(props -> new JukeblockBlock(props, ModBlockEntities.JUKEBOX_BE::get));
+    public static final MapCodec<JukeblockBlock> CODEC1 = simpleCodec(JukeblockBlock::new);
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 

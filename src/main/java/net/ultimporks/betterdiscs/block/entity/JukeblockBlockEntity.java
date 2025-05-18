@@ -2,6 +2,7 @@ package net.ultimporks.betterdiscs.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +11,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,8 +34,10 @@ import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import net.ultimporks.betterdiscs.util.SpeakerLinkUtil;
 import net.ultimporks.betterdiscs.util.menus.JukeboxMenu;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
@@ -47,12 +52,15 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
     private int isPlaying = 100;
     private int isStopped = 200;
     // Record
+    @Nullable
+    private Holder<JukeboxSong> song;
     private ItemStack currentDisc;
     // Volume Control
     private int volume = 100;
     // Particle Control
     private int particlesEnabled = 200;
     // Record Tick Count
+    private long ticksSinceSongStarted;
     private int ticksSinceLastEvent;
     private long recordStartedTick;
     private long tickCount;
@@ -102,13 +110,11 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         ++this.ticksSinceLastEvent;
         if (isPlaying() && currentDisc != null) {
-            if (this.currentDisc.getItem() instanceof RecordItem recordItem) {
-                if (shouldRecordStopPlaying(recordItem)) {
-                    this.shuffleNext();
-                } else if (shouldSendJukeblockPlayingEvent()) {
-                    this.ticksSinceLastEvent = 0;
-                    this.spawnMusicParticles(pLevel, this.getBlockPos());
-                }
+            if (this.song.value().hasFinished(this.ticksSinceSongStarted)) {
+                this.shuffleNext();
+            } else if (shouldSendJukeblockPlayingEvent()) {
+                this.ticksSinceLastEvent = 0;
+                this.spawnMusicParticles(pLevel, this.getBlockPos());
             }
         }
         ++this.tickCount;
@@ -164,7 +170,8 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stack = itemHandler.getStackInSlot(i);
 
-            if (!stack.isEmpty() && stack.getItem() instanceof RecordItem) {
+
+            if (!stack.isEmpty()) {
                 availableSlots.add(stack);
             }
         }
@@ -179,6 +186,11 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
                 return ItemStack.EMPTY;
             }
         }
+
+        int slot = new Random().nextInt(availableSlots.size() );
+        Optional<Holder<JukeboxSong>> song = JukeboxSong.fromStack(this.level.registryAccess(), currentDisc);
+
+
         return availableSlots.get(new Random().nextInt(availableSlots.size()));
     }
 
@@ -296,7 +308,7 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         this.particlesEnabled = pTag.getInt("ParticlesActive");
         this.recordStartedTick = pTag.getLong("RecordStartTick");
         this.tickCount = pTag.getLong("TickCount");
-        this.itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+        this.itemHandler.deserializeNBT(pRegistries,pTag);
     }
     @Override
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
@@ -307,15 +319,15 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         pTag.putInt("ParticlesActive", this.particlesEnabled);
         pTag.putLong("RecordStartTick", this.recordStartedTick);
         pTag.putLong("TickCount", this.tickCount);
-        pTag.put("inventory", this.itemHandler.serializeNBT());
+        pTag.put("inventory", this.itemHandler.serializeNBT(pRegistries));
     }
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
     @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider pRegistries) {
+        return saveWithoutMetadata(pRegistries);
     }
     @Override
     public Component getDisplayName() {

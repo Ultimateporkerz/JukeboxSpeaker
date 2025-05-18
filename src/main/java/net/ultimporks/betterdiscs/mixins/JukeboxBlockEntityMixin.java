@@ -16,30 +16,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(JukeboxBlockEntity.class)
 public abstract class JukeboxBlockEntityMixin {
 
-    @Shadow public abstract ItemStack getItem(int pSlot);
 
-    @Inject(method = "startPlaying", at = @At("RETURN"))
-    private void startPlaying(CallbackInfo ci) {
-        BetterMusicDiscs.jukeboxLOGGING("(JukeboxBlockEntityMixin) - Master Jukebox has started playing!");
+    @Inject(method = "setTheItem", at = @At("RETURN"))
+    private void setRecordItem(ItemStack pItem, CallbackInfo ci) {
+        JukeboxBlockEntity self = (JukeboxBlockEntity)(Object) this;
+        BlockPos pos = self.getBlockPos();
+        boolean hasItem = !pItem.isEmpty();
 
-        // Activate Linked speakers
-        BlockPos jukeboxPos = ((JukeboxBlockEntity) (Object) this).getBlockPos();
-        BlockEntity jukeboxEntity = ((JukeboxBlockEntity) (Object) this);
-        if (jukeboxEntity.getLevel() instanceof ServerLevel serverLevel && !serverLevel.isClientSide) {
-            SpeakerLinkUtil.activateSpeakersJukebox(serverLevel, jukeboxPos, getItem(0));
+        if (!self.getLevel().isClientSide && self.getLevel() instanceof ServerLevel serverLevel) {
+            if (hasItem) {
+                BetterMusicDiscs.jukeboxLOGGING("JukeboxBlockEntityMixin - Inserted item: " + pItem.getItem());
+                SpeakerLinkUtil.activateSpeakersJukebox(serverLevel, pos, pItem);
+            } else {
+                BetterMusicDiscs.jukeboxLOGGING("JukeboxBlockEntityMixin - Item removed, stopping speakers");
+                SpeakerLinkUtil.deactivateSpeakersJukebox(serverLevel, pos);
+            }
         }
     }
 
-    @Inject(method = "stopPlaying", at = @At("RETURN"))
-    private void onRecordStop(CallbackInfo ci) {
-        BetterMusicDiscs.jukeboxLOGGING("(JukeboxBlockEntityMixin) - Master Jukebox has stopped playing!");
 
-        // Deactivate linked speakers
-        BlockPos jukeboxPos = ((JukeboxBlockEntity) (Object) this).getBlockPos();
-        BlockEntity jukeboxEntity = ((JukeboxBlockEntity) (Object) this);
-        if (jukeboxEntity.getLevel() instanceof ServerLevel serverLevel && !serverLevel.isClientSide) {
-            SpeakerLinkUtil.deactivateSpeakersJukebox(serverLevel, jukeboxPos);
-        }
-    }
+
+
+
 
 }
