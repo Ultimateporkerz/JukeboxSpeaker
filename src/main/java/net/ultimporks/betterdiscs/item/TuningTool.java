@@ -70,7 +70,7 @@ public class TuningTool extends Item {
             }
         }
         // Handle Tool Reset
-        if (player.isCrouching() && !(blockEntity instanceof SpeakerBlockEntity) && !(blockEntity instanceof JukeboxBlockEntity) && !(state.getBlock() instanceof NoteBlock)) {
+        if (player.isCrouching() && !(blockEntity instanceof SpeakerBlockEntity) && !(blockEntity instanceof JukeboxBlockEntity) && !(state.getBlock() instanceof NoteBlock) && !(blockEntity instanceof JukeblockBlockEntity)) {
             if (TuningToolTagHelper.hasJukeboxTags(tuningTool) || TuningToolTagHelper.hasNoteBlockTags(tuningTool) || TuningToolTagHelper.hasSpeakerTags(tuningTool) || TuningToolTagHelper.hasJukeblockTags(tuningTool)) {
             if (TuningToolTagHelper.removeAllTags(tuningTool)) {
                     player.sendSystemMessage(Component.literal("Tuning Tool has been reset!").withStyle(ChatFormatting.GREEN));
