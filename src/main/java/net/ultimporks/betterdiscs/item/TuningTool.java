@@ -168,10 +168,16 @@ public class TuningTool extends Item {
 
     // Custom jukeblockEntity Handler
     private boolean handleJukeblockEntity(Player player, BlockPos jukeblockPos, ServerLevel serverLevel, ItemStack tuningTool) {
-        // Prevent player from linking Jukebox to Custom Jukebox
+        // Prevent player from linking Jukebox to Jukeblock
         if (TuningToolTagHelper.hasJukeboxTags(tuningTool)) {
             player.sendSystemMessage(Component.literal("Removing Jukebox tags before linking Jukeblock, please try again.").withStyle(ChatFormatting.YELLOW));
             TuningToolTagHelper.removeJukeboxTags(tuningTool);
+            return false;
+        }
+        // Prevent player from linking Noteblock to Jukeblock
+        if (TuningToolTagHelper.hasNoteBlockTags(tuningTool)) {
+            player.sendSystemMessage(Component.literal("Removing Noteblock tags before linking Jukeblock, please try again.").withStyle(ChatFormatting.YELLOW));
+            TuningToolTagHelper.removeNoteBlockTags(tuningTool);
             return false;
         }
 
@@ -203,6 +209,14 @@ public class TuningTool extends Item {
             TuningToolTagHelper.removeNoteBlockTags(tuningTool);
             return false;
         }
+        // Prevent player from linking Jukeblock to Jukebox
+        if (TuningToolTagHelper.hasJukeblockTags(tuningTool)) {
+            player.sendSystemMessage(Component.literal("Removing Jukeblock tags before linking Jukebox, please try again.").withStyle(ChatFormatting.YELLOW));
+            TuningToolTagHelper.removeJukeblockTags(tuningTool);
+            return false;
+        }
+
+
         // Check if speakerPos is saved
         if (TuningToolTagHelper.hasSpeakerTags(tuningTool)) {
             // If saved, get BlockPos and link to Jukebox
@@ -227,10 +241,17 @@ public class TuningTool extends Item {
     private boolean handleNoteBlock(Player player, BlockPos noteblockPos, ServerLevel serverLevel, ItemStack tuningTool) {
         // Prevent player from linking Jukebox to NoteBlock
         if (TuningToolTagHelper.hasJukeboxTags(tuningTool)) {
-            player.sendSystemMessage(Component.literal("Removing Jukebox tags before linking NoteBlock, please try again.").withStyle(ChatFormatting.YELLOW));
+            player.sendSystemMessage(Component.literal("Removing Jukebox tags before linking Noteblock, please try again.").withStyle(ChatFormatting.YELLOW));
             TuningToolTagHelper.removeJukeboxTags(tuningTool);
             return false;
         }
+        // Prevent player from linking Jukeblock to Noteblock
+        if (TuningToolTagHelper.hasJukeblockTags(tuningTool)) {
+            player.sendSystemMessage(Component.literal("Removing Jukeblock tags before linking Noteblock, please try again.").withStyle(ChatFormatting.YELLOW));
+            TuningToolTagHelper.removeJukeblockTags(tuningTool);
+            return false;
+        }
+
         // Check if player has a SpeakerPos saved, if so link Speaker to NoteBlock
         if (TuningToolTagHelper.hasSpeakerTags(tuningTool)) {
             // If saved, get BlockPos and link to NoteBlock
