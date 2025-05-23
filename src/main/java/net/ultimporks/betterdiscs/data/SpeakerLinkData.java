@@ -45,6 +45,71 @@ public class SpeakerLinkData extends SavedData {
         return data;
     }
 
+    // CLASS HELPERS
+
+    // Save / Load helpers
+    private static String posToString(BlockPos pos) {
+        return pos.getX() + "," + pos.getY() + "," + pos.getZ();
+    }
+    // Updated stringToPos method
+    private static BlockPos stringToPos(String key) {
+        String[] parts = key.split(",");
+        if (parts.length != 3) {
+            BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Invalid BlockPos key format: " + key);
+            return null; // Return null and skip invalid entries
+        }
+        try {
+            return new BlockPos(
+                    Integer.parseInt(parts[0]),
+                    Integer.parseInt(parts[1]),
+                    Integer.parseInt(parts[2])
+            );
+        } catch (NumberFormatException e) {
+            BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Failed to parse BlockPos from key: {} " + key + " " + e);
+            return null;
+        }
+    }
+    // Helper method to save maps
+    private static void saveSpeakerMap(CompoundTag dataTag, String key, Map<BlockPos, Set<BlockPos>> speakerMap) {
+        CompoundTag mapTag = new CompoundTag();
+        speakerMap.forEach((masterPos, speakers) -> {
+            ListTag speakerList = new ListTag();
+            speakers.forEach(speakerPos -> speakerList.add(NbtUtils.writeBlockPos(speakerPos)));
+            mapTag.put(posToString(masterPos), speakerList);
+        });
+        dataTag.put(key, mapTag);
+    }
+    // Helper method to load maps
+    private static void loadSpeakerMap(CompoundTag dataTag, String key, Map<BlockPos, Set<BlockPos>> speakerMap) {
+        if (!dataTag.contains(key, Tag.TAG_COMPOUND)) return;
+
+        CompoundTag mapTag = dataTag.getCompound(key);
+        for (String masterKey : mapTag.getAllKeys()) {
+            BlockPos masterPos = stringToPos(masterKey);
+            if (masterPos == null) {
+                BetterMusicDiscs.speakerLOGGING("(SpeakerLinkData) - Invalid master block position in NBT: " + masterKey);
+                continue;
+            }
+
+            ListTag speakerList = mapTag.getList(masterKey, Tag.TAG_COMPOUND);
+            Set<BlockPos> speakers = new HashSet<>();
+
+            for (int i = 0; i < speakerList.size(); i++) {
+                BlockPos speakerPos = NbtUtils.readBlockPos(speakerList.getCompound(i));
+
+                if (!speakerPos.equals(masterPos)) {
+                    speakers.add(speakerPos);
+                } else {
+                    BetterMusicDiscs.speakerLOGGING("(SpeakerLinkData) - Speaker cannot be linked to itself: " + masterPos);
+                }
+            }
+            if (!speakers.isEmpty()) {
+                speakerMap.put(masterPos, speakers);
+            }
+        }
+    }
+
+
     // Jukebox Side
 
     public Map<BlockPos, Set<BlockPos>> getLinkedSpeakersJukebox() {
@@ -180,71 +245,6 @@ public class SpeakerLinkData extends SavedData {
             BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Removed all speaker links linked to Jukeblock " + jukeblockPos.toShortString());
             linkedSpeakersJukeblock.remove(jukeblockPos);
             setDirty();
-        }
-    }
-
-
-    // CLASS HELPERS
-
-    // Save / Load helpers
-    private static String posToString(BlockPos pos) {
-        return pos.getX() + "," + pos.getY() + "," + pos.getZ();
-    }
-    // Updated stringToPos method
-    private static BlockPos stringToPos(String key) {
-        String[] parts = key.split(",");
-        if (parts.length != 3) {
-            BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Invalid BlockPos key format: " + key);
-            return null; // Return null and skip invalid entries
-        }
-        try {
-            return new BlockPos(
-                    Integer.parseInt(parts[0]),
-                    Integer.parseInt(parts[1]),
-                    Integer.parseInt(parts[2])
-            );
-        } catch (NumberFormatException e) {
-            BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Failed to parse BlockPos from key: {} " + key + " " + e);
-            return null;
-        }
-    }
-    // Helper method to save maps
-    private static void saveSpeakerMap(CompoundTag dataTag, String key, Map<BlockPos, Set<BlockPos>> speakerMap) {
-        CompoundTag mapTag = new CompoundTag();
-        speakerMap.forEach((masterPos, speakers) -> {
-            ListTag speakerList = new ListTag();
-            speakers.forEach(speakerPos -> speakerList.add(NbtUtils.writeBlockPos(speakerPos)));
-            mapTag.put(posToString(masterPos), speakerList);
-        });
-        dataTag.put(key, mapTag);
-    }
-    // Helper method to load maps
-    private static void loadSpeakerMap(CompoundTag dataTag, String key, Map<BlockPos, Set<BlockPos>> speakerMap) {
-        if (!dataTag.contains(key, Tag.TAG_COMPOUND)) return;
-
-        CompoundTag mapTag = dataTag.getCompound(key);
-        for (String masterKey : mapTag.getAllKeys()) {
-            BlockPos masterPos = stringToPos(masterKey);
-            if (masterPos == null) {
-                BetterMusicDiscs.speakerLOGGING("(SpeakerLinkData) - Invalid master block position in NBT: " + masterKey);
-                continue;
-            }
-
-            ListTag speakerList = mapTag.getList(masterKey, Tag.TAG_COMPOUND);
-            Set<BlockPos> speakers = new HashSet<>();
-
-            for (int i = 0; i < speakerList.size(); i++) {
-                BlockPos speakerPos = NbtUtils.readBlockPos(speakerList.getCompound(i));
-
-                if (!speakerPos.equals(masterPos)) {
-                    speakers.add(speakerPos);
-                } else {
-                    BetterMusicDiscs.speakerLOGGING("(SpeakerLinkData) - Speaker cannot be linked to itself: " + masterPos);
-                }
-            }
-            if (!speakers.isEmpty()) {
-                speakerMap.put(masterPos, speakers);
-            }
         }
     }
 }

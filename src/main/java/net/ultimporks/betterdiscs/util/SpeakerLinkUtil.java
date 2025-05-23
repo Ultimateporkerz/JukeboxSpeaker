@@ -223,11 +223,11 @@ public class SpeakerLinkUtil {
         return false;
     }
     // Unlink speaker from jukebox
-    public static void unlinkSpeakerJukebox(ServerLevel serverLevel, BlockPos speakerPos) {
-        if (serverLevel.isClientSide) return;
+    public static boolean unlinkSpeakerJukebox(ServerLevel serverLevel, BlockPos speakerPos) {
+        if (serverLevel.isClientSide) return false;
 
         SpeakerLinkData data = getData(serverLevel);
-        if (data == null) return;
+        if (data == null) return false;
 
         BlockEntity jukebox = getLinkedJukebox(serverLevel, speakerPos);
 
@@ -237,7 +237,9 @@ public class SpeakerLinkUtil {
             data.removeJukeboxLink(jukeboxPos, speakerPos);
             deactivateSpeakerJukebox(serverLevel, speakerPos);
             BetterMusicDiscs.jukeboxLOGGING("(SpeakerLinkUtil) - Unlinked speaker " + speakerPos + " from jukebox " + jukeboxPos);
+            return true;
         }
+        return false;
     }
     // Unlink ALL speakers from jukebox
     public static boolean unlinkAllSpeakersJukebox(ServerLevel serverLevel, BlockPos jukeboxPos) {
@@ -317,9 +319,9 @@ public class SpeakerLinkUtil {
         return false;
     }
     // Unlink a Speaker from Noteblock
-    public static void unlinkSpeakerNoteblock(ServerLevel serverLevel, BlockPos speakerPos) {
+    public static boolean unlinkSpeakerNoteblock(ServerLevel serverLevel, BlockPos speakerPos) {
         SpeakerLinkData data = getData(serverLevel);
-        if (data == null) return;
+        if (data == null) return false;
 
         Block noteBlock = getLinkedNoteBlock(serverLevel, speakerPos);
 
@@ -328,7 +330,9 @@ public class SpeakerLinkUtil {
             data.removeNoteblockLink(speakerPos);
             deactivateSpeakerJukebox(serverLevel, speakerPos);
             BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Unlinked speaker " + speakerPos + " from noteblock");
+            return true;
         }
+        return  false;
     }
     // Unlink ALL Speakers from Noteblock
     public static boolean unlinkAllSpeakersNoteblock(ServerLevel serverLevel, BlockPos noteblockPos) {

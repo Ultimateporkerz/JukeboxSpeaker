@@ -55,7 +55,6 @@ public class TuningTool extends Item {
                 return InteractionResult.SUCCESS;
             }
         }
-
         // Handle Jukebox Interaction
         if (blockEntity instanceof JukeboxBlockEntity) {
             if (handleJukeboxEntity(player, blockPos, serverLevel, tuningTool)) {
@@ -83,6 +82,13 @@ public class TuningTool extends Item {
 
     // SpeakerEntity Handler
     private boolean handleSpeakerEntity(Player player, BlockPos speakerPos, ServerLevel serverLevel, ItemStack tuningTool) {
+        // Prevent Speaker being linked to another Speaker
+        if (TuningToolTagHelper.hasSpeakerTags(tuningTool)) {
+            player.sendSystemMessage(Component.literal("Removing saved Speaker tags before linking Speaker, please try again.").withStyle(ChatFormatting.YELLOW));
+            TuningToolTagHelper.removeSpeakerTags(tuningTool);
+            return false;
+        }
+
         // Unlink Mode if player is holding shift
         if (player.isShiftKeyDown()) {
             // Return early if no links are found
@@ -92,14 +98,14 @@ public class TuningTool extends Item {
             }
 
             if (SpeakerLinkUtil.isSpeakerLinked(serverLevel, speakerPos).equals("Jukebox")) {
-                if (SpeakerLinkUtil.unlinkSpeakerJukeblock(serverLevel, speakerPos)) {
+                if (SpeakerLinkUtil.unlinkSpeakerJukebox(serverLevel, speakerPos)) {
                     player.sendSystemMessage(Component.literal("Speaker unlinked from Jukebox!").withStyle(ChatFormatting.GREEN));
                     return true;
                 }
             }
 
             if (SpeakerLinkUtil.isSpeakerLinked(serverLevel, speakerPos).equals("Noteblock")) {
-                if (SpeakerLinkUtil.unlinkSpeakerJukeblock(serverLevel, speakerPos)) {
+                if (SpeakerLinkUtil.unlinkSpeakerNoteblock(serverLevel, speakerPos)) {
                     player.sendSystemMessage(Component.literal("Speaker unlinked from Noteblock!").withStyle(ChatFormatting.GREEN));
                     return true;
                 }
