@@ -6,8 +6,8 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.ultimporks.betterdiscs.client.SpeakerSoundEvent;
 
 public class S2CSyncJukeboxOrNoteblockStopMessage {
-    private BlockPos speakerPos;
-    private boolean isStoppingAll;
+    private final BlockPos speakerPos;
+    private final boolean isStoppingAll;
 
     public S2CSyncJukeboxOrNoteblockStopMessage(BlockPos speakerPos, boolean isStoppingAll) {
         this.speakerPos = speakerPos;
@@ -27,8 +27,10 @@ public class S2CSyncJukeboxOrNoteblockStopMessage {
     public void handle(CustomPayloadEvent.Context context) {
         if (isStoppingAll) {
             SpeakerSoundEvent.stopAllSounds();
+            context.setPacketHandled(true);
         } else {
             SpeakerSoundEvent.stopSound(speakerPos);
+            context.setPacketHandled(true);
         }
     }
 }

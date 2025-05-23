@@ -5,12 +5,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 
 public class C2SSyncParticleMessage {
-    private boolean particlesEnabled;
-    private BlockPos blockPos;
+    private final boolean particlesEnabled;
+    private final BlockPos blockPos;
 
     public C2SSyncParticleMessage(boolean particlesEnabled, BlockPos blockPos) {
         this.particlesEnabled = particlesEnabled;
@@ -33,11 +32,13 @@ public class C2SSyncParticleMessage {
             BlockEntity blockEntity = player.level().getExistingBlockEntity(blockPos);
             if (blockEntity instanceof SpeakerBlockEntity speakerBlock) {
                 speakerBlock.setParticlesEnabled(particlesEnabled);
+                context.setPacketHandled(true);
             }
 
-            if (blockEntity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
-                jukeblockBlockEntity.setParticlesEnabled(particlesEnabled);
-            }
+        //    if (blockEntity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
+        //        jukeblockBlockEntity.setParticlesEnabled(particlesEnabled);
+        //        context.setPacketHandled(true);
+        //    }
         }
     }
 }

@@ -31,7 +31,7 @@ public class RecordLatheStationMenu extends AbstractContainerMenu {
     public RecordLatheStationMenu(int containerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.RECORD_LATHE_STATION_MENU.get(), containerId);
         checkContainerSize(inv, 2);
-        blockEntity = ((RecordLatheBlockEntity) entity);
+        this.blockEntity = ((RecordLatheBlockEntity) entity);
         this.level = inv.player.level();
         this.data = data;
 

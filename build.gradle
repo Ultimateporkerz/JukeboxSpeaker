@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 version = mod_version
@@ -50,19 +51,27 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+mixin {
+    add sourceSets.main, "mixins.betterdiscs.refmap.json"
+    config("betterdiscs.mixins.json")
+}
+
 repositories {
     maven {
-        // location of the maven that hosts JEI files since January 2023
+        // JEI Repo
         name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
+        url = "https://maven.blamejared.com/"}
 }
 
 dependencies {
+    // Minecraft
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    // JEI
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+    // Mixin AP
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 tasks.named('processResources', ProcessResources).configure {

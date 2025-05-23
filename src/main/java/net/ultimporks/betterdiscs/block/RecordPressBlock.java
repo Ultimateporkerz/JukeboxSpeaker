@@ -4,8 +4,10 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +31,7 @@ import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import java.util.List;
 
 public class RecordPressBlock extends BaseEntityBlock {
-    public static final MapCodec<RecordPressBlock> CODEC1 = simpleCodec(RecordPressBlock::new);
+    public static final MapCodec<RecordPressBlock> CODEC = simpleCodec(RecordPressBlock::new);
 
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 10, 16);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -40,7 +42,7 @@ public class RecordPressBlock extends BaseEntityBlock {
 
     @Override
     public MapCodec<? extends RecordPressBlock> codec() {
-        return CODEC1;
+        return CODEC;
     }
 
     @Override
@@ -54,8 +56,9 @@ public class RecordPressBlock extends BaseEntityBlock {
         if (!pLevel.isClientSide) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
             MenuProvider menuProvider = this.getMenuProvider(pState, pLevel, pPos);
-            if (entity instanceof RecordPressBlockEntity) {
-                pPlayer.openMenu(menuProvider);
+            if (entity instanceof RecordPressBlockEntity recordPressBlockEntity) {
+                ((ServerPlayer) pPlayer).openMenu(new SimpleMenuProvider
+                        (recordPressBlockEntity, Component.literal("Record Press")), pPos);
             } else {
                 throw new IllegalStateException("Container Provider is missing!");
             }

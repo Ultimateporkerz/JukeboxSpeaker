@@ -9,7 +9,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.ultimporks.betterdiscs.Reference;
-import net.ultimporks.betterdiscs.util.menus.JukeboxMenu;
 import net.ultimporks.betterdiscs.util.menus.RecordLatheStationMenu;
 import net.ultimporks.betterdiscs.util.menus.RecordPressStationMenu;
 import net.ultimporks.betterdiscs.util.menus.SpeakerMenus;
@@ -28,8 +27,8 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<SpeakerMenus>> SPEAKER_MENU =
             registerMenuType("speaker_menu", SpeakerMenus::new);
 
-    public static final RegistryObject<MenuType<JukeboxMenu>> JUKEBOX_MENU =
-            registerMenuType("jukebox_menu", JukeboxMenu::new);
+   // public static final RegistryObject<MenuType<JukeblockMenu>> JUKEBOX_MENU =
+         //   registerMenuType("jukebox_menu", JukeblockMenu::new);
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));

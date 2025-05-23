@@ -5,12 +5,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 
 public class C2SSyncVolumeMessage {
-    private int volume;
-    private BlockPos blockPos;
+    private final int volume;
+    private final BlockPos blockPos;
 
     public C2SSyncVolumeMessage(int volume, BlockPos blockPos) {
         this.volume = volume;
@@ -33,8 +32,10 @@ public class C2SSyncVolumeMessage {
             BlockEntity blockEntity = player.level().getExistingBlockEntity(blockPos);
             if (blockEntity instanceof SpeakerBlockEntity speakerBlock) {
                 speakerBlock.setVolume(volume);
-            } else if (blockEntity instanceof JukeblockBlockEntity jukeblockBlock) {
-                jukeblockBlock.setVolume(volume);
+                context.setPacketHandled(true);
+        //    } else if (blockEntity instanceof JukeblockBlockEntity jukeblockBlock) {
+        //        jukeblockBlock.setVolume(volume);
+        //        context.setPacketHandled(true);
             }
         }
     }

@@ -14,9 +14,9 @@ public class ModEventBusEvents {
 
     @SubscribeEvent
     public static void onWorldLoad(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ServerLevel level) {
+        if (event.getLevel() instanceof ServerLevel level && !event.getLevel().isClientSide()) {
             try {
-                SpeakerLinkUtil.loadAllLinkedSpeakers(level);
+                SpeakerLinkData data = SpeakerLinkData.get((ServerLevel) event.getLevel());
             } catch (Exception ex) {
                 BetterMusicDiscs.generalLOGGING("(ModEventBusEvents) - failed to load Speaker Data: " + ex);
             }

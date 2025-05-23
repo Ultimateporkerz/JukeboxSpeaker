@@ -6,10 +6,10 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.ultimporks.betterdiscs.client.SpeakerSoundEvent;
 
 public class S2CSyncNoteblockSpeakersMessage {
-    private BlockPos speakerPos;
-    private String instrumentName;
-    private int note;
-    private float volume;
+    private final BlockPos speakerPos;
+    private final String instrumentName;
+    private final int note;
+    private final float volume;
 
     public S2CSyncNoteblockSpeakersMessage(BlockPos speakerPos, String instrumentName, int note, float volume) {
         this.speakerPos = speakerPos;
@@ -34,5 +34,6 @@ public class S2CSyncNoteblockSpeakersMessage {
 
     public void handle(CustomPayloadEvent.Context context) {
         SpeakerSoundEvent.playNoteBlock(speakerPos, instrumentName, note, volume);
+        context.setPacketHandled(true);
     }
 }

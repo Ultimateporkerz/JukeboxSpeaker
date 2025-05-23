@@ -9,7 +9,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.client.entity.renderer.RecordLatheBlockEntityRenderer;
 import net.ultimporks.betterdiscs.client.entity.renderer.RecordPressBlockEntityRenderer;
-import net.ultimporks.betterdiscs.client.screen.JukeblockScreen;
 import net.ultimporks.betterdiscs.client.screen.RecordLatheStationScreen;
 import net.ultimporks.betterdiscs.client.screen.RecordPressStationScreen;
 import net.ultimporks.betterdiscs.client.screen.SpeakerScreen;
@@ -24,7 +23,7 @@ public class ModEventBusClientEvents {
        MenuScreens.register(ModMenuTypes.RECORD_PRESS_STATION_MENU.get(), RecordPressStationScreen::new);
        MenuScreens.register(ModMenuTypes.RECORD_LATHE_STATION_MENU.get(), RecordLatheStationScreen::new);
        MenuScreens.register(ModMenuTypes.SPEAKER_MENU.get(), SpeakerScreen::new);
-       MenuScreens.register(ModMenuTypes.JUKEBOX_MENU.get(), JukeblockScreen::new);
+      // MenuScreens.register(ModMenuTypes.JUKEBOX_MENU.get(), JukeblockScreen::new);
     }
 
     @SubscribeEvent

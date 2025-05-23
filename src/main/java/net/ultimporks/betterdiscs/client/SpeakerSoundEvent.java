@@ -8,11 +8,12 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
@@ -30,7 +31,8 @@ public class SpeakerSoundEvent {
     // Jukebox Sounds
     public static void playSound(float volume, BlockPos speakerPos, ItemStack currentDisc) {
         Level level = minecraft.level;
-        if (level == null || currentDisc.isEmpty()) return;
+        Player player = minecraft.player;
+        if (level == null || player == null || currentDisc.isEmpty()) return;
 
         RegistryAccess registryAccess = level.registryAccess();
 
@@ -40,7 +42,15 @@ public class SpeakerSoundEvent {
             SoundEvent soundEvent = song.soundEvent().get();
             int durationTicks = song.lengthInTicks();
 
-            SoundInstance soundInstance = new SimpleSoundInstance(
+            int xPos = speakerPos.getX();
+            int yPos = speakerPos.getY();
+            int zPos = speakerPos.getZ();
+
+            Vec3 speakerPosVec = new Vec3(xPos, yPos, zPos);
+
+            BetterMusicDiscs.jukeboxLOGGING("Jukebox/Jukeblock Pos: " + speakerPosVec);
+
+            SoundInstance musicInstance = new SimpleSoundInstance(
                     soundEvent,
                     SoundSource.RECORDS,
                     volume,
@@ -49,10 +59,14 @@ public class SpeakerSoundEvent {
                     speakerPos
             );
 
-            SoundInfo firstSoundInfo = new SoundInfo(soundInstance, soundEvent, 0, durationTicks);
+            SoundInfo firstSoundInfo = new SoundInfo(
+                    musicInstance,
+                    soundEvent,
+                    0,
+                    durationTicks);
 
             minecraft.execute(() -> {
-                minecraft.getSoundManager().play(soundInstance);
+                minecraft.getSoundManager().play(musicInstance);
                 ACTIVE_SOUNDS_JUKEBOX.put(speakerPos, firstSoundInfo);
                 BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Music is starting! Volume: " + volume);
             });
@@ -92,7 +106,7 @@ public class SpeakerSoundEvent {
 
         float pitch = (float) Math.pow(2.0, (note - 12) / 12.0);
 
-        SoundInstance soundInstance = new SimpleSoundInstance(
+        SoundInstance noteInstance = new SimpleSoundInstance(
                 soundEvent,
                 SoundSource.BLOCKS,
                 volume,
@@ -101,7 +115,7 @@ public class SpeakerSoundEvent {
                 speakerPos
         );
         minecraft.execute(() -> {
-            minecraft.getSoundManager().play(soundInstance);
+            minecraft.getSoundManager().play(noteInstance);
             BetterMusicDiscs.speakerLOGGING("(SpeakerSoundEvent) - Note is starting! Volume: " + volume);
         });
     }

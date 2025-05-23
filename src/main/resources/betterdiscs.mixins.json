@@ -7,7 +7,6 @@
   "plugin": "net.ultimporks.betterdiscs.mixins.MixinPlugin",
   "mixins": [
     "JukeboxBlockEntityMixin",
-    "JukeboxSongPlayerMixin",
     "LevelMixin",
     "NoteBlockMixin"
   ],

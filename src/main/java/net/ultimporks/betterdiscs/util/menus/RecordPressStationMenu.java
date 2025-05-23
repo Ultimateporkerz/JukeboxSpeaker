@@ -25,7 +25,7 @@ public class RecordPressStationMenu extends AbstractContainerMenu {
     public RecordPressStationMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.RECORD_PRESS_STATION_MENU.get(), pContainerId);
         checkContainerSize(inv, 2);
-        blockEntity = ((RecordPressBlockEntity) entity);
+        this.blockEntity = ((RecordPressBlockEntity) entity);
         this.level = inv.player.level();
         this.data = data;
 

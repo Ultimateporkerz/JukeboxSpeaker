@@ -32,10 +32,10 @@ public class ModBlockEntities {
                             .build(null));
 
     // Jukebox
-    public static final RegistryObject<BlockEntityType<JukeblockBlockEntity>> JUKEBOX_BE =
-            BLOCK_ENTITIES.register("jukebox_be", () ->
-                    BlockEntityType.Builder.of(JukeblockBlockEntity::new,
-                            ModBlocks.JUKEBLOCK.get()).build(null));
+  //  public static final RegistryObject<BlockEntityType<JukeblockBlockEntity>> JUKEBOX_BE =
+  //          BLOCK_ENTITIES.register("jukebox_be", () ->
+  //                  BlockEntityType.Builder.of(JukeblockBlockEntity::new,
+  //                          ModBlocks.JUKEBLOCK.get()).build(null));
 
 
     public static void register(IEventBus eventBus) {

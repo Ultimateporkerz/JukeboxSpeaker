@@ -9,9 +9,9 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.ultimporks.betterdiscs.client.SpeakerSoundEvent;
 
 public class S2CSyncJukeboxSpeakersMessage {
-    private ItemStack currentDisc;
-    private BlockPos blockPos;
-    private float volume;
+    private final ItemStack currentDisc;
+    private final BlockPos blockPos;
+    private final float volume;
 
 
     // Constructor for playing Jukebox
@@ -39,5 +39,6 @@ public class S2CSyncJukeboxSpeakersMessage {
 
     public void handle(CustomPayloadEvent.Context context) {
         SpeakerSoundEvent.playSound(volume, blockPos, currentDisc);
+        context.setPacketHandled(true);
     }
 }

@@ -3,9 +3,11 @@ package net.ultimporks.betterdiscs.block;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -20,12 +22,13 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import net.ultimporks.betterdiscs.item.TuningTool;
 
+/*
+
 public class JukeblockBlock extends BaseEntityBlock {
-    public static final MapCodec<JukeblockBlock> CODEC1 = simpleCodec(JukeblockBlock::new);
+    public static final MapCodec<JukeblockBlock> CODEC = simpleCodec(JukeblockBlock::new);
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
@@ -35,7 +38,7 @@ public class JukeblockBlock extends BaseEntityBlock {
 
     @Override
     public MapCodec<? extends JukeblockBlock> codec() {
-        return CODEC1;
+        return CODEC;
     }
 
     @Override
@@ -45,9 +48,9 @@ public class JukeblockBlock extends BaseEntityBlock {
                 return InteractionResult.FAIL;
             }
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            MenuProvider menuProvider = this.getMenuProvider(pState, pLevel, pPos);
-            if (entity instanceof JukeblockBlockEntity) {
-                pPlayer.openMenu(menuProvider);
+            if (entity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
+                ((ServerPlayer) pPlayer).openMenu(new SimpleMenuProvider
+                        (jukeblockBlockEntity, Component.literal("Jukeblock")), pPos);
             } else {
                 throw new IllegalStateException("Container Provider is missing!");
             }
@@ -60,7 +63,7 @@ public class JukeblockBlock extends BaseEntityBlock {
             return null;
         }
         return createTickerHelper(pBlockEntityType, ModBlockEntities.JUKEBOX_BE.get(),
-                ((pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)));
+                ((pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pState1)));
     }
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
@@ -95,3 +98,5 @@ public class JukeblockBlock extends BaseEntityBlock {
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 }
+
+ */

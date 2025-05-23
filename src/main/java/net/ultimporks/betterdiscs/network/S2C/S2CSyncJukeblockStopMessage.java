@@ -6,9 +6,9 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.ultimporks.betterdiscs.client.JukeblockSoundEvents;
 
 public class S2CSyncJukeblockStopMessage {
-    private BlockPos blockPos;
-    private boolean isStoppingAll;
-    private boolean isSpeaker;
+    private final BlockPos blockPos;
+    private final boolean isStoppingAll;
+    private final boolean isSpeaker;
 
     // Jukeblock Constructor
     public S2CSyncJukeblockStopMessage(BlockPos jukeblockPos) {
@@ -39,11 +39,14 @@ public class S2CSyncJukeblockStopMessage {
     public void handle(CustomPayloadEvent.Context context) {
         if (isSpeaker) {
             JukeblockSoundEvents.stopJukeblockSound(blockPos);
+            context.setPacketHandled(true);
         } else {
             if (isStoppingAll) {
                 JukeblockSoundEvents.stopAllSpeakerSounds();
+                context.setPacketHandled(true);
             } else {
                 JukeblockSoundEvents.stopSpeakerSound(blockPos);
+                context.setPacketHandled(true);
             }
         }
     }

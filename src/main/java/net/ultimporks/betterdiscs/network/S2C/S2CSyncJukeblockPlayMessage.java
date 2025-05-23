@@ -53,8 +53,10 @@ public class S2CSyncJukeblockPlayMessage {
     public void handle(CustomPayloadEvent.Context context) {
         if (speakers) {
             JukeblockSoundEvents.playJukeblock(jukeblockOrSpeakerPos, currentDisc, volume);
+            context.setPacketHandled(true);
         } else {
             JukeblockSoundEvents.playJukeblockSpeakers(jukeblockOrSpeakerPos, currentDisc, volume);
+            context.setPacketHandled(true);
         }
     }
 }

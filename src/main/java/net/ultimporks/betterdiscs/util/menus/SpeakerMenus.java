@@ -2,13 +2,17 @@ package net.ultimporks.betterdiscs.util.menus;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.items.SlotItemHandler;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
+import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.init.ModMenuTypes;
 
 public class SpeakerMenus extends AbstractContainerMenu {
@@ -19,11 +23,10 @@ public class SpeakerMenus extends AbstractContainerMenu {
     public SpeakerMenus(int containerId, Inventory inv, FriendlyByteBuf extraData) {
         this(containerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
     }
-
-    public SpeakerMenus(int containterId, Inventory inv, BlockEntity entity, ContainerData data) {
+    public SpeakerMenus(int containterId, Inventory inv, BlockEntity blockEntity, ContainerData data) {
         super(ModMenuTypes.SPEAKER_MENU.get(), containterId);
         checkContainerSize(inv, 0);
-        blockEntity = ((SpeakerBlockEntity) entity);
+        this.blockEntity = ((SpeakerBlockEntity) blockEntity);
         this.level = inv.player.level();
         this.data = data;
 
@@ -32,7 +35,6 @@ public class SpeakerMenus extends AbstractContainerMenu {
 
         addDataSlots(this.data);
     }
-
 
     public boolean areParticlesEnabled() {
         return blockEntity.areParticlesEnabled();
@@ -46,7 +48,7 @@ public class SpeakerMenus extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player pPlayer) {
-        return blockEntity instanceof SpeakerBlockEntity;
+        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), pPlayer, ModBlocks.SPEAKER.get());
     }
 
     private void addPlayerInventory(Inventory playerInventory) {

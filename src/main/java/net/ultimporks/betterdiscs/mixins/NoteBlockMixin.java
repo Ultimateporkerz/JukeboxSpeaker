@@ -3,9 +3,10 @@ package net.ultimporks.betterdiscs.mixins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,7 +14,6 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.BlockHitResult;
-import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.item.TuningTool;
 import net.ultimporks.betterdiscs.util.SpeakerLinkUtil;
 import org.spongepowered.asm.mixin.Final;
@@ -36,19 +36,14 @@ public class NoteBlockMixin {
         NoteBlockInstrument instrument = pState.getValue(INSTRUMENT);
         String instrumentName = instrument.getSerializedName();
         int note = pState.getValue(NOTE);
-        SpeakerLinkUtil.activateSpeakersNoteblock(pLevel, pPos, note, instrumentName);
+        SpeakerLinkUtil.activateSpeakersNoteblock((ServerLevel) pLevel, pPos, note, instrumentName);
     }
 
-    @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit, CallbackInfoReturnable<InteractionResult> cir) {
+    @Inject(method = "useItemOn", at = @At("RETURN"), cancellable = true)
+    private void useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult, CallbackInfoReturnable<ItemInteractionResult> cir) {
         if (pPlayer.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TuningTool) {
-            cir.setReturnValue(InteractionResult.FAIL);
+            cir.setReturnValue(ItemInteractionResult.FAIL);
             cir.cancel();
         }
     }
-
-
-
-
-
 }

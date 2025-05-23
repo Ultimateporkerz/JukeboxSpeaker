@@ -82,6 +82,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModBlocks.CEILING_SPEAKER.get())
                 .unlockedBy(getHasName(ModBlocks.CEILING_SPEAKER.get()), has(ModBlocks.CEILING_SPEAKER.get()))
                 .save(pRecipeOutput);
+        /*
         // Jukeblock
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.JUKEBLOCK.get())
                 .pattern("WWW")
@@ -93,7 +94,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', ItemTags.PLANKS)
                 .unlockedBy(getHasName(Blocks.JUKEBOX), has(Blocks.JUKEBOX))
                 .save(pRecipeOutput);
+         */
 
     }
-
 }

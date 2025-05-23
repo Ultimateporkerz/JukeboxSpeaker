@@ -18,6 +18,7 @@ import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.recipe.RecordPressRecipe;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("removal")
 public class RecordPressCategory implements IRecipeCategory<RecordPressRecipe> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "record_press");
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID,
@@ -50,13 +51,8 @@ public class RecordPressCategory implements IRecipeCategory<RecordPressRecipe> {
     }
 
     @Override
-    public int getWidth() {
-        return this.background.getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return this.background.getHeight();
+    public @Nullable IDrawable getBackground() {
+        return background;
     }
 
     @Override

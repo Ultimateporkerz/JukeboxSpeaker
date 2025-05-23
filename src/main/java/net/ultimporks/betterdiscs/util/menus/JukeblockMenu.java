@@ -10,23 +10,23 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
-import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.init.ModMenuTypes;
 
-public class JukeboxMenu extends AbstractContainerMenu {
+/*
+public class JukeblockMenu extends AbstractContainerMenu {
     public final JukeblockBlockEntity blockEntity;
     private final Level level;
     private final ContainerData data;
 
-    public JukeboxMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
+    public JukeblockMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
         this(containerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));
     }
 
-    public JukeboxMenu(int containerId, Inventory inv, BlockEntity entity, ContainerData data) {
+    public JukeblockMenu(int containerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.JUKEBOX_MENU.get(), containerId);
         checkContainerSize(inv, 18);
-        blockEntity = ((JukeblockBlockEntity) entity);
+        this.blockEntity = ((JukeblockBlockEntity) entity);
         this.level = inv.player.level();
         this.data = data;
 
@@ -135,3 +135,5 @@ public class JukeboxMenu extends AbstractContainerMenu {
 
 
 }
+
+ */

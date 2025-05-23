@@ -18,6 +18,7 @@ import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.recipe.RecordLatheRecipe;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("removal")
 public class RecordLatheCategory implements IRecipeCategory<RecordLatheRecipe> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "record_lathe");
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID,
@@ -51,20 +52,9 @@ public class RecordLatheCategory implements IRecipeCategory<RecordLatheRecipe> {
     }
 
     @Override
-    public int getWidth() {
-        return this.background.getWidth();
+    public @Nullable IDrawable getBackground() {
+        return background;
     }
-
-    @Override
-    public int getHeight() {
-        return this.background.getHeight();
-    }
-
-    @Override
-    public void draw(RecordLatheRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        this.background.draw(guiGraphics, 0, 0);
-    }
-
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, RecordLatheRecipe recipe, IFocusGroup focuses) {

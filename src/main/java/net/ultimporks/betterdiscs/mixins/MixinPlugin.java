@@ -14,6 +14,11 @@ public class MixinPlugin implements IMixinConfigPlugin {
     }
 
     @Override
+    public List<String> getMixins() {
+        return null;
+    }
+
+    @Override
     public String getRefMapperConfig() {
         return null;
     }
@@ -26,11 +31,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @Override
     public void acceptTargets(Set<String> set, Set<String> set1) {
 
-    }
-
-    @Override
-    public List<String> getMixins() {
-        return List.of();
     }
 
     @Override

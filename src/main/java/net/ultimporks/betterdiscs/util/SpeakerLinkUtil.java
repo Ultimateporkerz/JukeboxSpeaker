@@ -2,18 +2,13 @@ package net.ultimporks.betterdiscs.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.JukeboxSong;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.saveddata.SavedData;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
-import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 import net.ultimporks.betterdiscs.data.SpeakerLinkData;
 import net.ultimporks.betterdiscs.init.ModBlocks;
@@ -24,23 +19,13 @@ import java.util.*;
 
 public class SpeakerLinkUtil {
     private static final Map<ServerLevel, SpeakerLinkData> DATA_STORE = new HashMap<>();
-    private static final String DATA_NAME = "betterdiscs:LinkedSpeakers";
 
-
-
-    // Initialize the Saved Data
-    public static void loadAllLinkedSpeakers(ServerLevel level) {
-        level.getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(
-                        SpeakerLinkData::new,
-                        (tag, provider) -> SpeakerLinkData.load(tag),
-                        DataFixTypes.LEVEL), DATA_NAME);
-    }
 
     // JUKEBLOCK SIDE
 
     // Activates Jukeblock
-    public static void activateJukeblock(Level level, BlockPos jukeblockPos, ItemStack currentDisc) {
+    /*
+    public static void activateJukeblock(ServerLevel level, BlockPos jukeblockPos, ItemStack currentDisc) {
         if (level.getExistingBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity jukeblockBlockEntity && !level.isClientSide) {
             if (!currentDisc.isEmpty()) {
                 int volume = jukeblockBlockEntity.getVolume();
@@ -51,8 +36,7 @@ public class SpeakerLinkUtil {
         }
     }
     // Deactivates Jukeblock
-    public static void deactivateJukeblock(Level level, BlockPos jukeblockPos) {
-        if (level.isClientSide) return;
+    public static void deactivateJukeblock(ServerLevel level, BlockPos jukeblockPos) {
         if (level.getExistingBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity jukeblockBlockEntity) {
             jukeblockBlockEntity.setStopped();
             S2CSyncJukeblockStopMessage jukeblockStopMessage = new S2CSyncJukeblockStopMessage(jukeblockPos);
@@ -60,7 +44,7 @@ public class SpeakerLinkUtil {
         }
     }
     // Activates all speakers linked to Master's Block Pos
-    public static void activateSpeakersJukeblock(Level level, BlockPos masterBlockPos, ItemStack currentDisc) {
+    public static void activateSpeakersJukeblock(ServerLevel level, BlockPos masterBlockPos, ItemStack currentDisc) {
         getLinkedSpeakersJukeblock(level, masterBlockPos).forEach(speakerPos -> {
             if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 BlockEntity jukeblockEntity = level.getExistingBlockEntity(masterBlockPos);
@@ -77,8 +61,7 @@ public class SpeakerLinkUtil {
         });
     }
     // Deactivates ALL speakers linked to Master's Block Pos
-    public static void deactivateSpeakersJukeblock(Level level, BlockPos masterBlockPos) {
-        if (level.isClientSide) return;
+    public static void deactivateSpeakersJukeblock(ServerLevel level, BlockPos masterBlockPos) {
         getLinkedSpeakersJukeblock(level, masterBlockPos).forEach(speakerPos -> {
             if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 speakerBlock.setActive(false, ItemStack.EMPTY);
@@ -88,8 +71,7 @@ public class SpeakerLinkUtil {
         });
     }
     // Deactivates a SINGLE speaker linked to Master's Block Pos
-    public static void deactivateSpeakerJukeblock(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return;
+    public static void deactivateSpeakerJukeblock(ServerLevel level, BlockPos speakerPos) {
         if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
             speakerBlock.setActive(false, ItemStack.EMPTY);
             S2CSyncJukeblockStopMessage speakerStopMessage = new S2CSyncJukeblockStopMessage(speakerPos, false);
@@ -97,10 +79,8 @@ public class SpeakerLinkUtil {
         }
     }
     // Link speaker to jukeblock
-    public static boolean linkSpeakerJukeblock(Level level, BlockPos masterBlockPos, BlockPos speakerPos) {
-        if (level.isClientSide) return false;
-
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static boolean linkSpeakerJukeblock(ServerLevel level, BlockPos masterBlockPos, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
         if (data == null) return false;
 
         if (isValidPosition(level, masterBlockPos) && isValidPosition(level, speakerPos)) {
@@ -110,10 +90,8 @@ public class SpeakerLinkUtil {
         return false;
     }
     // Unlink speaker from jukeblock
-    public static boolean unlinkSpeakerJukeblock(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return false;
-
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static boolean unlinkSpeakerJukeblock(ServerLevel level, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
         if (data == null) return false;
 
         deactivateSpeakerJukeblock(level, speakerPos);
@@ -136,9 +114,8 @@ public class SpeakerLinkUtil {
         return true;
     }
     // Unlink ALL speakers from jukeblock
-    public static boolean unlinkAllSpeakersJukeblock(Level level, BlockPos jukeblockPos) {
-        if (level.isClientSide) return false;
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static boolean unlinkAllSpeakersJukeblock(ServerLevel level, BlockPos jukeblockPos) {
+        SpeakerLinkData data = getData(level);
         if (data == null) return false;
 
         deactivateJukeblock(level, jukeblockPos);
@@ -147,19 +124,20 @@ public class SpeakerLinkUtil {
         return true;
     }
 
+
+
     // JUKEBLOCK HELPER METHODS
 
     // Gets all the linked speakers from a jukeblock
-    public static List<BlockPos> getLinkedSpeakersJukeblock(Level level, BlockPos jukeblockPos) {
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static List<BlockPos> getLinkedSpeakersJukeblock(ServerLevel level, BlockPos jukeblockPos) {
+        SpeakerLinkData data = getData(level);
         return data != null ?
                 new ArrayList<>(data.getLinkedSpeakersJukeblock().getOrDefault(jukeblockPos, Collections.emptySet())) :
                 Collections.emptyList();
     }
     // Returns the jukeblock block entity from a speakerPos
-    public static BlockEntity getLinkedJukeblock(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return null;
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static BlockEntity getLinkedJukeblock(ServerLevel level, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
         // Make sure Data is there
         if (data == null) {
             BetterMusicDiscs.jukeblockLOGGING("(SpeakerLinkUtil) - Data is NULL - returning NULL");
@@ -177,12 +155,12 @@ public class SpeakerLinkUtil {
         }
         return null;
     }
-
+    */
 
     // JUKEBOX SIDE
 
     // Activates all speakers linked to Master's Block Pos
-    public static void activateSpeakersJukebox(Level level, BlockPos masterBlockPos, ItemStack currentDisc) {
+    public static void activateSpeakersJukebox(ServerLevel level, BlockPos masterBlockPos, ItemStack currentDisc) {
         getLinkedSpeakersJukebox(level, masterBlockPos).forEach(speakerPos -> {
             if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 if (!currentDisc.isEmpty()) {
@@ -196,8 +174,7 @@ public class SpeakerLinkUtil {
         });
     }
     // Deactivates ALL speakers linked to Master's Block Pos
-    public static void deactivateSpeakersJukebox(Level level, BlockPos masterBlockPos) {
-        if (level.isClientSide) return;
+    public static void deactivateSpeakersJukebox(ServerLevel level, BlockPos masterBlockPos) {
         getLinkedSpeakersJukebox(level, masterBlockPos).forEach(speakerPos -> {
             if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 speakerBlock.setActive(false, ItemStack.EMPTY);
@@ -207,20 +184,20 @@ public class SpeakerLinkUtil {
         });
     }
     // Deactivates a SINGLE speaker linked to Master's Block Pos
-    public static void deactivateSpeakerJukebox(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return;
+    public static void deactivateSpeakerJukebox(ServerLevel level, BlockPos speakerPos) {
         if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
-            speakerBlock.setActive(false, null);
+            speakerBlock.setActive(false, ItemStack.EMPTY);
             S2CSyncJukeboxOrNoteblockStopMessage message = new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, false);
             ModMessages.sendToAllPlayers(message);
         }
     }
     // Link speaker to jukebox
-    public static boolean linkSpeakerJukebox(Level level, BlockPos masterBlockPos, BlockPos speakerPos) {
-        if (level.isClientSide) return false;
-
-        SpeakerLinkData data = getData((ServerLevel) level);
-        if (data == null) return false;
+    public static boolean linkSpeakerJukebox(ServerLevel level, BlockPos masterBlockPos, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
+        if (data == null) {
+            BetterMusicDiscs.jukeboxLOGGING("(SpeakerLinkUtil) - Data is NULL");
+            return false;
+        }
 
         if (isValidPosition(level, masterBlockPos) && isValidPosition(level, speakerPos)) {
             data.addJukeboxLink(masterBlockPos, speakerPos);
@@ -229,11 +206,9 @@ public class SpeakerLinkUtil {
         return false;
     }
     // Unlink speaker from jukebox
-    public static void unlinkSpeakerJukebox(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return;
-
-        SpeakerLinkData data = getData((ServerLevel) level);
-        if (data == null) return;
+    public static boolean unlinkSpeakerJukebox(ServerLevel level, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
+        if (data == null) return false;
 
         BlockEntity jukebox = getLinkedJukebox(level, speakerPos);
 
@@ -243,12 +218,13 @@ public class SpeakerLinkUtil {
             data.removeJukeboxLink(jukeboxPos, speakerPos);
             deactivateSpeakerJukebox(level, speakerPos);
             BetterMusicDiscs.jukeboxLOGGING("(SpeakerLinkUtil) - Unlinked speaker " + speakerPos + " from jukebox " + jukeboxPos);
+            return true;
         }
+        return false;
     }
     // Unlink ALL speakers from jukebox
-    public static boolean unlinkAllSpeakersJukebox(Level level, BlockPos jukeboxPos) {
-        if (level.isClientSide) return false;
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static boolean unlinkAllSpeakersJukebox(ServerLevel level, BlockPos jukeboxPos) {
+        SpeakerLinkData data = getData(level);
         if (data == null) return false;
 
         deactivateSpeakersJukebox(level, jukeboxPos);
@@ -259,16 +235,15 @@ public class SpeakerLinkUtil {
     // JUKEBOX HELPER METHODS
 
     // Gets all the linked speakers from a jukebox
-    public static List<BlockPos> getLinkedSpeakersJukebox(Level level, BlockPos jukeboxPos) {
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static List<BlockPos> getLinkedSpeakersJukebox(ServerLevel level, BlockPos jukeboxPos) {
+        SpeakerLinkData data = getData(level);
         return data != null ?
                 new ArrayList<>(data.getLinkedSpeakersJukebox().getOrDefault(jukeboxPos, Collections.emptySet())) :
                 Collections.emptyList();
     }
     // Returns the jukebox block entity from a speakerPos
-    public static BlockEntity getLinkedJukebox(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return null;
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static BlockEntity getLinkedJukebox(ServerLevel level, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
         // Make sure Data is there
         if (data == null) {
             BetterMusicDiscs.jukeboxLOGGING("(SpeakerLinkUtil) - Data is NULL - returning NULL");
@@ -291,12 +266,13 @@ public class SpeakerLinkUtil {
     // NOTEBLOCK SIDE
 
     // Activates all speakers linked to Noteblock
-    public static void activateSpeakersNoteblock(Level level, BlockPos noteblockPos, int note, String instrumentName) {
-        if (level.isClientSide) return;
+    public static void activateSpeakersNoteblock(ServerLevel level, BlockPos noteblockPos, int note, String instrumentName) {
         getLinkedSpeakersNoteblock(level, noteblockPos).forEach(speakerPos -> {
             if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speaker) {
                 int volume = speaker.getVolume();
                 float scaledVolume = volume / 100.0F;
+
+                BetterMusicDiscs.noteblockLOGGING("Noteblock has been activated.");
 
                 BlockState state = speaker.getBlockState();
                 if (state.is(ModBlocks.CEILING_SPEAKER.get())) {
@@ -307,13 +283,12 @@ public class SpeakerLinkUtil {
                 }
                 S2CSyncNoteblockSpeakersMessage message = new S2CSyncNoteblockSpeakersMessage(speakerPos, instrumentName, note, scaledVolume);
                 ModMessages.sendToAllPlayers(message);
-
             }
         });
     }
     // Link a Speaker to Noteblock
-    public static boolean linkSpeakerNoteblock(Level level, BlockPos noteblockPos, BlockPos speakerPos) {
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static boolean linkSpeakerNoteblock(ServerLevel level, BlockPos noteblockPos, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
         if (data == null) return false;
 
         if (isValidPosition(level, noteblockPos) && isValidPosition(level, speakerPos)) {
@@ -323,11 +298,9 @@ public class SpeakerLinkUtil {
         return false;
     }
     // Unlink a Speaker from Noteblock
-    public static void unlinkSpeakerNoteblock(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return;
-
-        SpeakerLinkData data = getData((ServerLevel) level);
-        if (data == null) return;
+    public static boolean unlinkSpeakerNoteblock(ServerLevel level, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
+        if (data == null) return false;
 
         Block noteBlock = getLinkedNoteBlock(level, speakerPos);
 
@@ -336,13 +309,13 @@ public class SpeakerLinkUtil {
             data.removeNoteblockLink(speakerPos);
             deactivateSpeakerJukebox(level, speakerPos);
             BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Unlinked speaker " + speakerPos + " from noteblock");
+            return true;
         }
+        return false;
     }
     // Unlink ALL Speakers from Noteblock
-    public static boolean unlinkAllSpeakersNoteblock(Level level, BlockPos noteblockPos) {
-        if (level.isClientSide) return false;
-
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static boolean unlinkAllSpeakersNoteblock(ServerLevel level, BlockPos noteblockPos) {
+        SpeakerLinkData data = getData(level);
         if (data == null) {
             return false;
         }
@@ -353,16 +326,15 @@ public class SpeakerLinkUtil {
     // NOTEBLOCK HELPER METHODS
 
     // Gets all linked speakers from a noteblock
-    public static List<BlockPos> getLinkedSpeakersNoteblock(Level level, BlockPos noteblockPos) {
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static List<BlockPos> getLinkedSpeakersNoteblock(ServerLevel level, BlockPos noteblockPos) {
+        SpeakerLinkData data = getData(level);
         return data != null ?
                 new ArrayList<>(data.getLinkedSpeakersNoteblock().getOrDefault(noteblockPos, Collections.emptySet())) :
                 Collections.emptyList();
     }
     // Returns the noteblock block from a SpeakerPos
-    public static Block getLinkedNoteBlock(Level level, BlockPos speakerPos) {
-        if (level.isClientSide) return null;
-        SpeakerLinkData data = getData((ServerLevel) level);
+    public static Block getLinkedNoteBlock(ServerLevel level, BlockPos speakerPos) {
+        SpeakerLinkData data = getData(level);
 
         if (data == null) {
             BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Data is NULL - returning NULL");
@@ -383,12 +355,12 @@ public class SpeakerLinkUtil {
 
     // CLASS HELPER METHODS
     private static SpeakerLinkData getData(ServerLevel level) {
-        return DATA_STORE.get(level);
+        return SpeakerLinkData.get(level);
     }
-    private static boolean isValidPosition(Level level, BlockPos pos) {
+    private static boolean isValidPosition(ServerLevel level, BlockPos pos) {
         return level.isLoaded(pos);
     }
-    public static String isSpeakerLinked(Level level, BlockPos speakerPos) {
+    public static String isSpeakerLinked(ServerLevel level, BlockPos speakerPos) {
         // Check if the level is a ServerLevel before casting
         if (!(level instanceof ServerLevel serverLevel)) {
             BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Level is not a ServerLevel!");
@@ -397,13 +369,8 @@ public class SpeakerLinkUtil {
 
         SpeakerLinkData data = getData(serverLevel);
 
-        // 1.21.1 Change - Return Early if data set is empty.
-        if (data == null) {
-            return "NULL";
-        }
-
         // Log the SpeakerLinkData to check its contents
-        BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - SpeakerLinkData: " + data.toString());
+        BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - SpeakerLinkData: " + data);
 
         // Log the speaker position being checked
         BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Checking speaker at: " + speakerPos);

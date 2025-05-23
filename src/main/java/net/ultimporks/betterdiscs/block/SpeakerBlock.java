@@ -4,9 +4,11 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +19,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -84,9 +85,9 @@ public class SpeakerBlock extends BaseEntityBlock {
                 return InteractionResult.FAIL;
         }
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            MenuProvider menuProvider = this.getMenuProvider(pState, pLevel, pPos);
-            if (entity instanceof SpeakerBlockEntity) {
-                pPlayer.openMenu(menuProvider);
+            if (entity instanceof SpeakerBlockEntity speakerBlockEntity) {
+                ((ServerPlayer) pPlayer).openMenu(new SimpleMenuProvider
+                        (speakerBlockEntity, Component.literal("Speaker")), pPos);
             } else {
                 throw new IllegalStateException("Container Provider is missing!");
             }

@@ -18,7 +18,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
-import net.minecraft.world.item.JukeboxSongPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,9 +35,8 @@ import java.util.Optional;
 public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     private long ticksSinceSongStarted;
     @Nullable
-    private Holder<JukeboxSong> song;
+    private Optional<Holder<JukeboxSong>> currentSong;
     private ItemStack currentDisc = ItemStack.EMPTY;
-    private final JukeboxSongPlayer jukeblockSongPlayer = new JukeboxSongPlayer(this::onSongChanged, this.getBlockPos());
 
     // Playing music
     private boolean isPlaying = false;
@@ -52,41 +50,40 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     // Record Tick Count
     private long tickCount;
 
-    protected final ContainerData data;
+    protected final ContainerData dataAccess = new ContainerData() {
+        @Override
+        public int get(int pIndex) {
+            return switch (pIndex) {
+                case 0 -> SpeakerBlockEntity.this.volume;
+                case 1 -> SpeakerBlockEntity.this.particlesEnabled;
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int pIndex, int pValue) {
+            switch (pIndex) {
+                case 0 -> SpeakerBlockEntity.this.volume = pValue;
+                case 1 -> SpeakerBlockEntity.this.particlesEnabled = pValue;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    };
 
     public SpeakerBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.SPEAKER_BE.get(), pPos, pBlockState);
-        this.data = new ContainerData() {
-            @Override
-            public int get(int pIndex) {
-                return switch (pIndex) {
-                    case 0 -> SpeakerBlockEntity.this.volume;
-                    case 1 -> SpeakerBlockEntity.this.particlesEnabled;
-                    default -> 0;
-                };
-            }
-
-            @Override
-            public void set(int pIndex, int pValue) {
-                switch (pIndex) {
-                    case 0 -> SpeakerBlockEntity.this.volume = pValue;
-                    case 1 -> SpeakerBlockEntity.this.particlesEnabled = pValue;
-                }
-            }
-
-            @Override
-            public int getCount() {
-                return 2;
-            }
-        };
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         if (this.isRemoved()) return;
         ++this.ticksSinceSongStarted;
         if (this.isPlaying && !this.isPaused && currentDisc != null) {
-            if (this.song.value().hasFinished(this.ticksSinceSongStarted)) {
-                SpeakerLinkUtil.deactivateSpeakerJukebox(level, this.getBlockPos());
+            if (this.currentSong.get().value().hasFinished(this.ticksSinceSongStarted)) {
+                SpeakerLinkUtil.deactivateSpeakerJukebox((ServerLevel) level, this.getBlockPos());
             } else if (this.shouldSendSpeakerPlayingEvent() && !getBlockState().is(ModBlocks.CEILING_SPEAKER.get())) {
                 this.ticksSinceSongStarted = 0;
                 this.spawnMusicParticles(level, pos);
@@ -111,7 +108,7 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     // Volume
     public void setVolume(int newVolume) {
         this.volume = newVolume;
-        this.data.set(0, newVolume);
+        this.dataAccess.set(0, newVolume);
         setChanged();
         level.sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), 3);
         BetterMusicDiscs.speakerLOGGING("(SpeakerBlockEntity) - Setting volume to: " + volume);
@@ -150,11 +147,11 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
         if (enabled) {
             // Enable
             this.particlesEnabled = 200;
-            this.data.set(1, 200);
+            this.dataAccess.set(1, 200);
         } else {
             // Disable
             this.particlesEnabled = 100;
-            this.data.set(1, 100);
+            this.dataAccess.set(1, 100);
         }
         setChanged();
         level.sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), 3);
@@ -177,8 +174,10 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
         this.setChanged();
         this.level.updateNeighborsAt(getBlockPos(), level.getBlockState(getBlockPos()).getBlock());
         // sets the Song
-        Optional<Holder<JukeboxSong>> optional = JukeboxSong.fromStack(this.level.registryAccess(), this.currentDisc);
-        this.song = optional.get();
+        if (currentDisc != ItemStack.EMPTY) {
+            this.currentSong = JukeboxSong.fromStack(this.level.registryAccess(), this.currentDisc);
+            BetterMusicDiscs.jukeblockLOGGING("Current Song set to: " + currentSong);
+        }
     }
     public void onSongChanged() {
         this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
@@ -188,9 +187,10 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
 
     // Menus
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, Player pPlayer) {
-        return new SpeakerMenus(pContainerId, pPlayerInventory, this, this.data);
+    public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+        return new SpeakerMenus(pContainerId, pPlayerInventory, this, this.dataAccess);
     }
+
 
     public int getComparatorOutput() {
         return JukeboxSong.fromStack(this.level.registryAccess(), this.currentDisc).map(Holder::value).map(JukeboxSong::comparatorOutput).orElse(0);

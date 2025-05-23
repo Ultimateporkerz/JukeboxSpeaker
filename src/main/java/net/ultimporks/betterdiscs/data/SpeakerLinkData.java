@@ -4,14 +4,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class SpeakerLinkData extends SavedData {
     private final Map<BlockPos, Set<BlockPos>> linkedSpeakersJukebox = new HashMap<>();
@@ -21,30 +23,106 @@ public class SpeakerLinkData extends SavedData {
     // The NBT_KEY data is saved to
     private static final String NBT_KEY = "LinkedSpeakers";
 
+    // Save, Load, and Get Methods
+
     @Override
-    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.Provider pRegistries) {
-        CompoundTag dataTag = new CompoundTag();
-        saveSpeakerMap(dataTag, "jukebox", linkedSpeakersJukebox);
-        saveSpeakerMap(dataTag, "noteblock", linkedSpeakersNoteblock);
-        saveSpeakerMap(dataTag, "jukeblock", linkedSpeakersJukeblock);
-        tag.put(NBT_KEY, dataTag);
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+        // Helper to serialize a BlockPos into a CompoundTag
+        BiFunction<BlockPos, CompoundTag, CompoundTag> serializeBlockPos = (pos, compound) -> {
+            compound.putInt("x", pos.getX());
+            compound.putInt("y", pos.getY());
+            compound.putInt("z", pos.getZ());
+            return compound;
+        };
+
+        // Serialize a Map<BlockPos, Set<BlockPos>> into a ListTag
+        java.util.function.Function<Map<BlockPos, Set<BlockPos>>, ListTag> serializeMap = (map) -> {
+            ListTag list = new ListTag();
+            for (Map.Entry<BlockPos, Set<BlockPos>> entry : map.entrySet()) {
+                CompoundTag entryTag = new CompoundTag();
+
+                // Serialize key BlockPos
+                CompoundTag keyTag = new CompoundTag();
+                serializeBlockPos.apply(entry.getKey(), keyTag);
+                entryTag.put("key", keyTag);
+
+                // Serialize Set<BlockPos> as ListTag
+                ListTag valueList = new ListTag();
+                for (BlockPos pos : entry.getValue()) {
+                    CompoundTag posTag = new CompoundTag();
+                    serializeBlockPos.apply(pos, posTag);
+                    valueList.add(posTag);
+                }
+                entryTag.put("value", valueList);
+
+                list.add(entryTag);
+            }
+            return list;
+        };
+
+        tag.put("linkedSpeakersJukebox", serializeMap.apply(linkedSpeakersJukebox));
+        tag.put("linkedSpeakersNoteblock", serializeMap.apply(linkedSpeakersNoteblock));
+        tag.put("linkedSpeakersJukeblock", serializeMap.apply(linkedSpeakersJukeblock));
+
         return tag;
     }
-
-    public static SpeakerLinkData load(CompoundTag tag) {
+    public static SpeakerLinkData load(CompoundTag tag, HolderLookup.Provider registries) {
         SpeakerLinkData data = new SpeakerLinkData();
 
-        if (tag == null || !tag.contains(NBT_KEY, Tag.TAG_COMPOUND)) {
-            BetterMusicDiscs.speakerLOGGING("(SpeakerLinkData) - Invalid or missing NBT data!");
-            return data;
+        // Helper to deserialize a BlockPos from a CompoundTag
+        Function<CompoundTag, BlockPos> deserializeBlockPos = (compound) -> {
+            return new BlockPos(
+                    compound.getInt("x"),
+                    compound.getInt("y"),
+                    compound.getInt("z")
+            );
+        };
+
+        // Deserialize a ListTag into a Map<BlockPos, Set<BlockPos>>
+        Function<ListTag, Map<BlockPos, Set<BlockPos>>> deserializeMap = (list) -> {
+            Map<BlockPos, Set<BlockPos>> map = new HashMap<>();
+            for (Tag entryTag : list) {
+                if (entryTag instanceof CompoundTag compoundEntry) {
+                    // Deserialize key BlockPos
+                    CompoundTag keyTag = compoundEntry.getCompound("key");
+                    BlockPos key = deserializeBlockPos.apply(keyTag);
+
+                    // Deserialize Set<BlockPos> from ListTag
+                    ListTag valueList = compoundEntry.getList("value", Tag.TAG_COMPOUND);
+                    Set<BlockPos> value = new HashSet<>();
+                    for (Tag posTag : valueList) {
+                        if (posTag instanceof CompoundTag compoundPos) {
+                            value.add(deserializeBlockPos.apply(compoundPos));
+                        }
+                    }
+
+                    map.put(key, value);
+                }
+            }
+            return map;
+        };
+
+        if (tag.contains("linkedSpeakersJukebox", Tag.TAG_LIST)) {
+            data.linkedSpeakersJukebox.putAll(deserializeMap.apply(tag.getList("linkedSpeakersJukebox", Tag.TAG_COMPOUND)));
+        }
+        if (tag.contains("linkedSpeakersNoteblock", Tag.TAG_LIST)) {
+            data.linkedSpeakersNoteblock.putAll(deserializeMap.apply(tag.getList("linkedSpeakersNoteblock", Tag.TAG_COMPOUND)));
+        }
+        if (tag.contains("linkedSpeakersJukeblock", Tag.TAG_LIST)) {
+            data.linkedSpeakersJukeblock.putAll(deserializeMap.apply(tag.getList("linkedSpeakersJukeblock", Tag.TAG_COMPOUND)));
         }
 
-        CompoundTag dataTag = tag.getCompound(NBT_KEY);
-        loadSpeakerMap(dataTag, "jukebox", data.linkedSpeakersJukebox);
-        loadSpeakerMap(dataTag, "noteblock", data.linkedSpeakersNoteblock);
-        loadSpeakerMap(dataTag, "jukeblock", data.linkedSpeakersJukeblock);
-
         return data;
+    }
+    public static SpeakerLinkData get(ServerLevel level) {
+        return level.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        SpeakerLinkData::new,
+                        SpeakerLinkData::load,
+                        DataFixTypes.LEVEL
+                ),
+                NBT_KEY
+        );
     }
 
     // Jukebox Side
@@ -184,83 +262,4 @@ public class SpeakerLinkData extends SavedData {
             setDirty();
         }
     }
-
-
-    // CLASS HELPERS
-
-    // Save / Load helpers
-    private static String posToString(BlockPos pos) {
-        return pos.getX() + "," + pos.getY() + "," + pos.getZ();
-    }
-    // Updated stringToPos method
-    private static BlockPos stringToPos(String key) {
-        String[] parts = key.split(",");
-        if (parts.length != 3) {
-            BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Invalid BlockPos key format: " + key);
-            return null; // Return null and skip invalid entries
-        }
-        try {
-            return new BlockPos(
-                    Integer.parseInt(parts[0]),
-                    Integer.parseInt(parts[1]),
-                    Integer.parseInt(parts[2])
-            );
-        } catch (NumberFormatException e) {
-            BetterMusicDiscs.speakerLOGGING("(SpeakerLinkUtil) - Failed to parse BlockPos from key: {} " + key + " " + e);
-            return null;
-        }
-    }
-    // Helper method to save maps
-    private static void saveSpeakerMap(CompoundTag dataTag, String key, Map<BlockPos, Set<BlockPos>> speakerMap) {
-        CompoundTag mapTag = new CompoundTag();
-        speakerMap.forEach((masterPos, speakers) -> {
-            ListTag speakerList = new ListTag();
-            speakers.forEach(speakerPos -> speakerList.add(NbtUtils.writeBlockPos(speakerPos)));
-            mapTag.put(posToString(masterPos), speakerList);
-        });
-        dataTag.put(key, mapTag);
-    }
-    // Helper method to load maps
-    private static void loadSpeakerMap(CompoundTag dataTag, String key, Map<BlockPos, Set<BlockPos>> speakerMap) {
-        if (!dataTag.contains(key, Tag.TAG_COMPOUND)) return;
-
-        CompoundTag mapTag = dataTag.getCompound(key);
-        for (String masterKey : mapTag.getAllKeys()) {
-            BlockPos masterPos = stringToPos(masterKey);
-            if (masterPos == null) {
-                BetterMusicDiscs.speakerLOGGING("(SpeakerLinkData) - Invalid master block position in NBT: " + masterKey);
-                continue;
-            }
-
-            ListTag speakerList = mapTag.getList(masterKey, Tag.TAG_COMPOUND);
-            Set<BlockPos> speakers = new HashSet<>();
-
-            for (int i = 0; i < speakerList.size(); i++) {
-                BlockPos speakerPos = readBlockPosSafe(speakerList.getCompound(i));
-
-                if (!speakerPos.equals(masterPos)) {
-                    speakers.add(speakerPos);
-                } else {
-                    BetterMusicDiscs.speakerLOGGING("(SpeakerLinkData) - Speaker cannot be linked to itself: " + masterPos);
-                }
-            }
-            if (!speakers.isEmpty()) {
-                speakerMap.put(masterPos, speakers);
-            }
-        }
-    }
-
-    private static BlockPos readBlockPosSafe(CompoundTag tag) {
-        try {
-            int x = tag.getInt("X");
-            int y = tag.getInt("Y");
-            int z = tag.getInt("Z");
-            return new BlockPos(x, y, z);
-        } catch (Exception e) {
-            BetterMusicDiscs.speakerLOGGING("Failed to read BlockPos from tag: " + tag);
-            return null;
-        }
-    }
-
-
 }

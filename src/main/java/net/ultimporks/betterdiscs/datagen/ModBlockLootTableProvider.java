@@ -20,7 +20,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.WALL_SPEAKER.get());
         dropSelf(ModBlocks.SPEAKER.get());
 
-        dropSelf(ModBlocks.JUKEBLOCK.get());
+    //    dropSelf(ModBlocks.JUKEBLOCK.get());
 
         dropSelf(ModBlocks.RECORD_LATHE.get());
         dropSelf(ModBlocks.RECORD_PRESS.get());
