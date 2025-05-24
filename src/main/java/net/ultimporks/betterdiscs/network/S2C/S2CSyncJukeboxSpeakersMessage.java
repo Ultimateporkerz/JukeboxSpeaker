@@ -38,7 +38,7 @@ public class S2CSyncJukeboxSpeakersMessage {
     }
 
     public void handle(CustomPayloadEvent.Context context) {
-        SpeakerSoundEvent.playSound(volume, blockPos, currentDisc);
+        SpeakerSoundEvent.playSound(currentDisc, blockPos, volume);
         context.setPacketHandled(true);
     }
 }

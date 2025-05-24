@@ -29,10 +29,10 @@ public class SpeakerSoundEvent {
     private static final Map<BlockPos, SoundInfo> ACTIVE_SOUNDS_JUKEBOX = new HashMap<>();
 
     // Jukebox Sounds
-    public static void playSound(float volume, BlockPos speakerPos, ItemStack currentDisc) {
+    public static void playSound(ItemStack currentDisc, BlockPos speakerPos, float volume) {
+        if (currentDisc.isEmpty()) return;
         Level level = minecraft.level;
-        Player player = minecraft.player;
-        if (level == null || player == null || currentDisc.isEmpty()) return;
+        if (level == null) return;
 
         RegistryAccess registryAccess = level.registryAccess();
 
@@ -40,30 +40,19 @@ public class SpeakerSoundEvent {
             JukeboxSong song = songHolder.value();
 
             SoundEvent soundEvent = song.soundEvent().get();
-            int durationTicks = song.lengthInTicks();
 
-            int xPos = speakerPos.getX();
-            int yPos = speakerPos.getY();
-            int zPos = speakerPos.getZ();
+            Vec3 speakerPosVec = new Vec3(speakerPos.getX(), speakerPos.getY(), speakerPos.getZ());
 
-            Vec3 speakerPosVec = new Vec3(xPos, yPos, zPos);
-
-            BetterMusicDiscs.jukeboxLOGGING("Jukebox/Jukeblock Pos: " + speakerPosVec);
-
-            SoundInstance musicInstance = new SimpleSoundInstance(
+            SoundInstance musicInstance = SimpleSoundInstance.forJukeboxSong(
                     soundEvent,
-                    SoundSource.RECORDS,
-                    volume,
-                    1.0F,
-                    SoundInstance.createUnseededRandom(),
-                    speakerPos
+                    speakerPosVec
             );
 
             SoundInfo firstSoundInfo = new SoundInfo(
                     musicInstance,
                     soundEvent,
                     0,
-                    durationTicks);
+                    song.lengthInTicks());
 
             minecraft.execute(() -> {
                 minecraft.getSoundManager().play(musicInstance);
@@ -96,9 +85,7 @@ public class SpeakerSoundEvent {
 
     // NoteBlock sounds
     public static void playNoteBlock(BlockPos speakerPos, String instrumentName, int note, float volume) {
-        if (instrumentName == null) {
-            return;
-        }
+        if (instrumentName == null) return;
         NoteBlockInstrument instrument = NoteBlockInstrument.valueOf(instrumentName.toUpperCase());
         SoundEvent soundEvent  = getSoundEventForInstrument(instrument);
 

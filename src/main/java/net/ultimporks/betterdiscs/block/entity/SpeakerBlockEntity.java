@@ -79,7 +79,7 @@ public class SpeakerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (this.isRemoved()) return;
+        if (this.isRemoved() || currentSong == null) return;
         ++this.ticksSinceSongStarted;
         if (this.isPlaying && !this.isPaused && currentDisc != null) {
             if (this.currentSong.get().value().hasFinished(this.ticksSinceSongStarted)) {

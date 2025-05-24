@@ -1,24 +1,25 @@
 
 modLoader="javafml"
-loaderVersion="${loader_version_range}"
+loaderVersion="[52,)"
 license="mit"
+
 [[mods]]
-modId="betterdiscs"
-version="1.0.0"
-displayName="Jukebox Speaker"
-authors="UltimatePorkerz"
-description='''${mod_description}'''
+modId= "betterdiscs"
+version= "1.0.0beta"
+displayName= "Jukebox Speaker"
+authors= "UltimatePorkerz"
+description= '''Useful blocks for Records, and Jukebox/Noteblock'''
 
 [[dependencies.betterdiscs]]
     modId="forge"
     mandatory=true
-    versionRange="${forge_version_range}"
+    versionRange="[52,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.betterdiscs]]
     modId="minecraft"
     mandatory=true
-    versionRange="${minecraft_version_range}"
+    versionRange="[1.21.1,1.21.2)"
     ordering="NONE"
     side="BOTH"
 
