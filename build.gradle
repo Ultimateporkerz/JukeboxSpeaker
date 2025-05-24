@@ -56,6 +56,12 @@ mixin {
     config("betterdiscs.mixins.json")
 }
 
+sourceSets {
+    main {
+        ext.refMap = "@{mod_id}.refmap.json"
+    }
+}
+
 repositories {
     maven {
         // JEI Repo
@@ -97,7 +103,8 @@ tasks.named('jar', Jar).configure {
             'Specification-Version'   : mod_version,
             'Implementation-Title'    : project.name,
             'Implementation-Version'  : project.jar.archiveVersion,
-            'Implementation-Vendor'   : mod_authors
+            'Implementation-Vendor'   : mod_authors,
+            'MixinConfigs'            : "${mod_id}.mixins.json"
         ])
     }
 }
