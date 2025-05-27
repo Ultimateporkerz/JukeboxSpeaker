@@ -1,0 +1,282 @@
+[25May2025 01:12:19.751] [src.main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_data, --assetIndex, 17, --assetsDir, C:\Users\ultim\.gradle\caches\forge_gradle\assets, --gameDir, ., --mod, betterdiscs, --all, --output, C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\src\generated\resources, --existing, C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\src\src.main\resources, --mixin.config, betterdiscs.mixins.json]
+[25May2025 01:12:19.754] [src.main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Oracle Corporation Java HotSpot(TM) 64-Bit Server VM 21.0.7+8-LTS-245
+[25May2025 01:12:19.754] [src.main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.2.4 starting: java version 21.0.7 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
+[25May2025 01:12:19.893] [src.main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forge_userdev_data
+[25May2025 01:12:20.024] [src.main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///C:/Users/ultim/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=UNKNOWN
+[25May2025 01:12:21.284] [src.main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[25May2025 01:12:22.354] [src.main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[25May2025 01:12:22.360] [src.main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_data' with arguments [--gameDir, ., --assetsDir, C:\Users\ultim\.gradle\caches\forge_gradle\assets, --assetIndex, 17, --mod, betterdiscs, --all, --output, C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\src\generated\resources, --existing, C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\src\src.main\resources]
+[25May2025 01:12:22.422] [src.main/WARN] [mixin/]: Reference map 'betterdiscs.mixins.refmap.json' for betterdiscs.mixins.json could not be read. If this is a development environment you can ignore this message
+[25May2025 01:12:22.508] [src.main/WARN] [mixin/]: Mixin environment was unable to detect the current side, sided mixins will not be applied
+[25May2025 01:12:28.235] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 52.1.0, for MC 1.21.1 with MCP 20240808.132146
+[25May2025 01:12:28.235] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v52.1.0 Initialized
+[25May2025 01:12:28.304] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
+[25May2025 01:12:28.542] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'DebugMode' is not a valid config key for config category 'debug'.
+Valid keys: [debugMode, debugGuis, debugInputs, debugInfoTooltipsEnabled, crashingTestItemsEnabled, logSuffixTreeStats]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-debug.ini
+Line #5: "	DebugMode = false"
+[25May2025 01:12:28.543] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'DebugGuis' is not a valid config key for config category 'debug'.
+Valid keys: [debugMode, debugGuis, debugInputs, debugInfoTooltipsEnabled, crashingTestItemsEnabled, logSuffixTreeStats]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-debug.ini
+Line #10: "	DebugGuis = false"
+[25May2025 01:12:28.543] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'DebugInputs' is not a valid config key for config category 'debug'.
+Valid keys: [debugMode, debugGuis, debugInputs, debugInfoTooltipsEnabled, crashingTestItemsEnabled, logSuffixTreeStats]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-debug.ini
+Line #15: "	DebugInputs = false"
+[25May2025 01:12:28.543] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'DebugIngredients' is not a valid config key for config category 'debug'.
+Valid keys: [debugMode, debugGuis, debugInputs, debugInfoTooltipsEnabled, crashingTestItemsEnabled, logSuffixTreeStats]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-debug.ini
+Line #20: "	DebugIngredients = true"
+[25May2025 01:12:28.543] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'CrashingTestItemsEnabled' is not a valid config key for config category 'debug'.
+Valid keys: [debugMode, debugGuis, debugInputs, debugInfoTooltipsEnabled, crashingTestItemsEnabled, logSuffixTreeStats]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-debug.ini
+Line #25: "	CrashingTestItemsEnabled = false"
+[25May2025 01:12:28.560] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: '[modname]' is not a valid category name.
+Valid names are: [modName]
+Skipping all values until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-mod-id-format.ini
+Line #1: "[modname]"
+[25May2025 01:12:28.561] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-mod-id-format.ini
+Line #9: "	ModNameFormat = blue italic"
+[25May2025 01:12:28.568] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'SearchColors' is not a valid config key for config category 'colors'.
+Valid keys: [searchColors]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-colors.ini
+Line #6: "	SearchColors = White:EEEEEE, LightBlue:7492CC, Cyan:00EEEE, Blue:2222DD, LapisBlue:25418B, Teal:008080, Yellow:CACB58, GoldenYellow:EED700, Orange:D97634, Pink:D1899D, HotPink:FC0FC0, Magenta:B24BBB, Purple:813EB9, EvilPurple:2E1649, Lavender:B57EDC, Indigo:480082, Sand:DBD3A0, Tan:BB9B63, LightBrown:A0522D, Brown:634B33, DarkBrown:3A2D13, LimeGreen:43B239, SlimeGreen:83CB73, Green:008000, DarkGreen:224D22, GrassGreen:548049, Red:963430, BrickRed:B0604B, NetherBrick:2A1516, Redstone:CE3E36, Black:181515, CharcoalGray:464646, IronGray:646464, Gray:808080, Silver:C0C0C0"
+[25May2025 01:12:28.577] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'CenterSearch' is not a valid config key for config category 'appearance'.
+Valid keys: [centerSearch, recipeGuiHeight]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #5: "	CenterSearch = false"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'RecipeGuiHeight' is not a valid config key for config category 'appearance'.
+Valid keys: [centerSearch, recipeGuiHeight]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #10: "	RecipeGuiHeight = 350"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: '[cheat_mode]' is not a valid category name.
+Valid names are: [appearance, cheating, bookmarks, tooltips, performance, lookups, advanced, input, sorting, search, ingredientList, bookmarkList]
+Skipping all values until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #13: "[cheat_mode]"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #17: "	GiveMode = MOUSE_PICKUP"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #22: "	CheatToHotbarUsingHotkeysEnabled = false"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #27: "	ShowHiddenItems = false"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'AddBookmarksToFrontEnabled' is not a valid config key for config category 'bookmarks'.
+Valid keys: [addBookmarksToFrontEnabled, dragToRearrangeBookmarksEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #34: "	AddBookmarksToFrontEnabled = false"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'BookmarkTooltipFeatures' is not a valid config key for config category 'bookmarks'.
+Valid keys: [addBookmarksToFrontEnabled, dragToRearrangeBookmarksEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #40: "	BookmarkTooltipFeatures = PREVIEW"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'HoldShiftToShowBookmarkTooltipFeatures' is not a valid config key for config category 'bookmarks'.
+Valid keys: [addBookmarksToFrontEnabled, dragToRearrangeBookmarksEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #45: "	HoldShiftToShowBookmarkTooltipFeatures = true"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'DragToRearrangeBookmarksEnabled' is not a valid config key for config category 'bookmarks'.
+Valid keys: [addBookmarksToFrontEnabled, dragToRearrangeBookmarksEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #50: "	DragToRearrangeBookmarksEnabled = true"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'LowMemorySlowSearchEnabled' is not a valid config key for config category 'advanced'.
+Valid keys: [catchRenderErrorsEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #57: "	LowMemorySlowSearchEnabled = false"
+[25May2025 01:12:28.578] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'CatchRenderErrorsEnabled' is not a valid config key for config category 'advanced'.
+Valid keys: [catchRenderErrorsEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #62: "	CatchRenderErrorsEnabled = false"
+[25May2025 01:12:28.579] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'lookupFluidContentsEnabled' is not a valid config key for config category 'advanced'.
+Valid keys: [catchRenderErrorsEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #67: "	lookupFluidContentsEnabled = false"
+[25May2025 01:12:28.579] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'lookupBlockTagsEnabled' is not a valid config key for config category 'advanced'.
+Valid keys: [catchRenderErrorsEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #72: "	lookupBlockTagsEnabled = true"
+[25May2025 01:12:28.579] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'dragDelayInMilliseconds' is not a valid config key for config category 'advanced'.
+Valid keys: [catchRenderErrorsEnabled]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #77: "	dragDelayInMilliseconds = 150"
+[25May2025 01:12:28.579] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'IngredientSortStages' is not a valid config key for config category 'sorting'.
+Valid keys: [ingredientSortStages, recipeSorterStages]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #85: "	IngredientSortStages = MOD_NAME, INGREDIENT_TYPE, CREATIVE_MENU"
+[25May2025 01:12:28.579] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'RecipeSorterStages' is not a valid config key for config category 'sorting'.
+Valid keys: [ingredientSortStages, recipeSorterStages]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #91: "	RecipeSorterStages = BOOKMARKED, CRAFTABLE"
+[25May2025 01:12:28.579] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: '[tags]' is not a valid category name.
+Valid names are: [appearance, cheating, bookmarks, tooltips, performance, lookups, advanced, input, sorting, search, ingredientList, bookmarkList]
+Skipping all values until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #94: "[tags]"
+[25May2025 01:12:28.579] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #98: "	TagContentTooltipEnabled = true"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #103: "	HideSingleIngredientTagsEnabled = true"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'ModNameSearchMode' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #110: "	ModNameSearchMode = REQUIRE_PREFIX"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'TooltipSearchMode' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #115: "	TooltipSearchMode = ENABLED"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'TagSearchMode' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #120: "	TagSearchMode = REQUIRE_PREFIX"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'ColorSearchMode' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #125: "	ColorSearchMode = DISABLED"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'ResourceLocationSearchMode' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #130: "	ResourceLocationSearchMode = DISABLED"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'SearchAdvancedTooltips' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #135: "	SearchAdvancedTooltips = false"
+[25May2025 01:12:28.580] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'SearchModIds' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #140: "	SearchModIds = true"
+[25May2025 01:12:28.585] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: 'SearchShortModNames' is not a valid config key for config category 'search'.
+Valid keys: [modNameSearchMode, tagSearchMode, tooltipSearchMode, colorSearchMode, resourceLocationSearchMode, creativeTabSearchMode, searchAdvancedTooltips, searchModIds, searchModAliases, searchShortModNames, searchIngredientAliases]
+Skipping this key.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #145: "	SearchShortModNames = true"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: '[IngredientList]' is not a valid category name.
+Valid names are: [appearance, cheating, bookmarks, tooltips, performance, lookups, advanced, input, sorting, search, ingredientList, bookmarkList]
+Skipping all values until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #148: "[IngredientList]"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #152: "	MaxRows = 16"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #157: "	MaxColumns = 9"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #162: "	HorizontalAlignment = RIGHT"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #167: "	VerticalAlignment = TOP"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #172: "	ButtonNavigationVisibility = ENABLED"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #177: "	DrawBackground = false"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: '[BookmarkList]' is not a valid category name.
+Valid names are: [appearance, cheating, bookmarks, tooltips, performance, lookups, advanced, input, sorting, search, ingredientList, bookmarkList]
+Skipping all values until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #180: "[BookmarkList]"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #184: "	MaxRows = 16"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #189: "	MaxColumns = 9"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #194: "	HorizontalAlignment = LEFT"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #199: "	VerticalAlignment = TOP"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #204: "	ButtonNavigationVisibility = ENABLED"
+[25May2025 01:12:28.586] [modloading-worker-0/ERROR] [mezz.jei.common.config.file.ConfigSerializer/]: Expected a '[category]' here.
+Configs must start with a category before defining values.
+Skipping all lines until the first valid category is declared.
+Config file: C:\Users\ultim\Desktop\Minecraft mod projects\BetterMusicDiscs 1.21.1\run-data\config\jei\jei-client.ini
+Line #209: "	DrawBackground = false"
+[25May2025 01:12:28.600] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager...
+[25May2025 01:12:28.609] [modloading-worker-0/INFO] [mezz.jei.library.load.PluginCaller/]: Sending ConfigManager took 7.469 ms
+[25May2025 01:12:28.768] [src.main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [betterdiscs]
+[25May2025 01:12:28.858] [src.main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/ultim/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1/forge-1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1-recomp.jar%230!/assets/.mcassetsroot' uses unexpected schema
+[25May2025 01:12:28.859] [src.main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/ultim/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1/forge-1.21.1-52.1.0_mapped_parchment_2024.11.17-1.21.1-recomp.jar%230!/data/.mcassetsroot' uses unexpected schema
+[25May2025 01:12:29.073] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
+[25May2025 01:12:29.346] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 271 ms
+[25May2025 01:12:29.346] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[25May2025 01:12:29.367] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 19 ms
+[25May2025 01:12:29.367] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: betterdiscs
+[25May2025 01:12:29.472] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Block States: betterdiscs finished after 104 ms
+[25May2025 01:12:29.472] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: betterdiscs
+[25May2025 01:12:29.480] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: betterdiscs finished after 8 ms
+[25May2025 01:12:29.480] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id betterdiscs
+[25May2025 01:12:29.482] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id betterdiscs finished after 1 ms
+[25May2025 01:12:29.482] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id betterdiscs
+[25May2025 01:12:29.482] [src.main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id betterdiscs finished after 0 ms
+[25May2025 01:12:29.482] [src.main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 410 ms
+[25May2025 01:12:29.485] [src.main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 27, old count: 27, new count: 28, removed stale: 0, written: 0
