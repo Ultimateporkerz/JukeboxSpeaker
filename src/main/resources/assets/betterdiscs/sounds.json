@@ -1,0 +1,26 @@
+{
+  "womp_portal": {
+    "sounds": [
+      {
+        "name": "betterdiscs:womp_portal",
+        "stream": true
+      }
+    ]
+  },
+  "have_ghosts": {
+    "sounds": [
+      {
+        "name": "betterdiscs:have_ghosts",
+        "stream": true
+      }
+    ]
+  },
+  "bad": {
+    "sounds": [
+      {
+        "name": "betterdiscs:bad",
+        "stream": true
+      }
+    ]
+  }
+}
