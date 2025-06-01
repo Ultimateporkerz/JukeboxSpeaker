@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betterdiscs:speaker"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "betterdiscs:ceiling_speaker"
+  }
+}
