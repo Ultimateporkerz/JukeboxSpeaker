@@ -1,34 +1,24 @@
 package net.ultimporks.betterdiscs.network.C2S;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import java.util.Objects;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.ultimporks.betterdiscs.Reference;
 
-public class C2SSyncPlayButtonMessage {
-    private final BlockPos jukeblockPos;
+public record C2SSyncPlayButtonMessage(BlockPos jukeblockPos) implements CustomPacketPayload {
+    public static final Type<C2SSyncPlayButtonMessage> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "sync_play_button_message"));
 
-    public C2SSyncPlayButtonMessage(BlockPos jukeblockPos) {
-        this.jukeblockPos = jukeblockPos;
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, C2SSyncPlayButtonMessage> STREAM_CODEC =
+            StreamCodec.composite(
+                    BlockPos.STREAM_CODEC, C2SSyncPlayButtonMessage::jukeblockPos,
+                    C2SSyncPlayButtonMessage::new
+            );
 
-    public C2SSyncPlayButtonMessage (FriendlyByteBuf buf) {
-        this.jukeblockPos = buf.readBlockPos();
-    }
-
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeBlockPos(jukeblockPos);
-    }
-
-    public void handle(CustomPayloadEvent.Context context) {
-        Level level = Objects.requireNonNull(context.getSender()).level();
-        BlockEntity blockEntity = level.getExistingBlockEntity(jukeblockPos);
-    //    if (blockEntity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
-            // Activate BlockEntity
-    //        jukeblockBlockEntity.startPlaying();
-            context.setPacketHandled(true);
-    //    }
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

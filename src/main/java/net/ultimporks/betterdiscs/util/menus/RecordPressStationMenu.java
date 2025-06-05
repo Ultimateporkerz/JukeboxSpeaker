@@ -7,8 +7,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import net.ultimporks.betterdiscs.block.entity.RecordPressBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.init.ModMenuTypes;
@@ -24,7 +23,6 @@ public class RecordPressStationMenu extends AbstractContainerMenu {
 
     public RecordPressStationMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.RECORD_PRESS_STATION_MENU.get(), pContainerId);
-        checkContainerSize(inv, 2);
         this.blockEntity = ((RecordPressBlockEntity) entity);
         this.level = inv.player.level();
         this.data = data;
@@ -32,10 +30,8 @@ public class RecordPressStationMenu extends AbstractContainerMenu {
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
-        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 80, 11));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 80, 59));
-        });
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 0, 80, 11));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 1, 80, 59));
 
         addDataSlots(data);
     }

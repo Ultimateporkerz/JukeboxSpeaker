@@ -1,15 +1,14 @@
 package net.ultimporks.betterdiscs.events;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.data.SpeakerLinkData;
-import net.ultimporks.betterdiscs.util.SpeakerLinkUtil;
 
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ModEventBusEvents {
 
     @SubscribeEvent

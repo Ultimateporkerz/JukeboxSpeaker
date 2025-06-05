@@ -1,44 +1,26 @@
 package net.ultimporks.betterdiscs.network.C2S;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.ultimporks.betterdiscs.Reference;
 
-public class C2SSyncParticleMessage {
-    private final boolean particlesEnabled;
-    private final BlockPos blockPos;
+public record C2SSyncParticleMessage(BlockPos speakerPos, boolean particlesEnabled) implements CustomPacketPayload {
+    public static final Type<C2SSyncParticleMessage> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "sync_particle_message"));
 
-    public C2SSyncParticleMessage(boolean particlesEnabled, BlockPos blockPos) {
-        this.particlesEnabled = particlesEnabled;
-        this.blockPos = blockPos;
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, C2SSyncParticleMessage> STREAM_CODEC =
+            StreamCodec.composite(
+                    BlockPos.STREAM_CODEC, C2SSyncParticleMessage::speakerPos,
+                    ByteBufCodecs.BOOL, C2SSyncParticleMessage::particlesEnabled,
+                    C2SSyncParticleMessage::new
+            );
 
-    public C2SSyncParticleMessage (FriendlyByteBuf buf) {
-        this.particlesEnabled = buf.readBoolean();
-        this.blockPos = buf.readBlockPos();
-    }
-
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeBoolean(particlesEnabled);
-        buf.writeBlockPos(blockPos);
-    }
-
-    public void handle(CustomPayloadEvent.Context context) {
-        Player player = context.getSender();
-        if (player != null) {
-            BlockEntity blockEntity = player.level().getExistingBlockEntity(blockPos);
-            if (blockEntity instanceof SpeakerBlockEntity speakerBlock) {
-                speakerBlock.setParticlesEnabled(particlesEnabled);
-                context.setPacketHandled(true);
-            }
-
-        //    if (blockEntity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
-        //        jukeblockBlockEntity.setParticlesEnabled(particlesEnabled);
-        //        context.setPacketHandled(true);
-        //    }
-        }
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

@@ -1,39 +1,28 @@
 package net.ultimporks.betterdiscs.network.S2C;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.ultimporks.betterdiscs.client.SpeakerSoundEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.ultimporks.betterdiscs.Reference;
 
-public class S2CSyncNoteblockSpeakersMessage {
-    private final BlockPos speakerPos;
-    private final String instrumentName;
-    private final int note;
-    private final float volume;
+public record S2CSyncNoteblockSpeakersMessage(BlockPos speakerPos, String instrumentName, int note, float volume) implements CustomPacketPayload {
+    public static final Type<S2CSyncNoteblockSpeakersMessage> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "sync_noteblock_speaker_message"));
 
-    public S2CSyncNoteblockSpeakersMessage(BlockPos speakerPos, String instrumentName, int note, float volume) {
-        this.speakerPos = speakerPos;
-        this.instrumentName = instrumentName;
-        this.note = note;
-        this.volume = volume;
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CSyncNoteblockSpeakersMessage> STREAM_CODEC =
+            StreamCodec.composite(
+                    BlockPos.STREAM_CODEC, S2CSyncNoteblockSpeakersMessage::speakerPos,
+                    ByteBufCodecs.STRING_UTF8, S2CSyncNoteblockSpeakersMessage::instrumentName,
+                    ByteBufCodecs.INT, S2CSyncNoteblockSpeakersMessage::note,
+                    ByteBufCodecs.FLOAT, S2CSyncNoteblockSpeakersMessage::volume,
+                    S2CSyncNoteblockSpeakersMessage::new
+            );
 
-    public S2CSyncNoteblockSpeakersMessage (FriendlyByteBuf buf) {
-        this.speakerPos = buf.readBlockPos();
-        this.instrumentName = buf.readUtf();
-        this.note = buf.readInt();
-        this.volume = buf.readFloat();
-    }
-
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeBlockPos(speakerPos);
-        buf.writeUtf(instrumentName);
-        buf.writeInt(note);
-        buf.writeFloat(volume);
-    }
-
-    public void handle(CustomPayloadEvent.Context context) {
-        SpeakerSoundEvent.playNoteBlock(speakerPos, instrumentName, note, volume);
-        context.setPacketHandled(true);
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

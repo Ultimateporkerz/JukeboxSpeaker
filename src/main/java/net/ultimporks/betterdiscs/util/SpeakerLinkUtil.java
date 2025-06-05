@@ -8,11 +8,11 @@ import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 import net.ultimporks.betterdiscs.data.SpeakerLinkData;
 import net.ultimporks.betterdiscs.init.ModBlocks;
-import net.ultimporks.betterdiscs.init.ModMessages;
 import net.ultimporks.betterdiscs.network.S2C.*;
 
 import java.util.*;
@@ -162,13 +162,12 @@ public class SpeakerLinkUtil {
     // Activates all speakers linked to Master's Block Pos
     public static void activateSpeakersJukebox(ServerLevel level, BlockPos masterBlockPos, ItemStack currentDisc) {
         getLinkedSpeakersJukebox(level, masterBlockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 if (!currentDisc.isEmpty()) {
                     speakerBlock.setActive(true, currentDisc);
                     int volume = speakerBlock.getVolume();
                     float scaledVolume = volume / 100.0F;
-                    S2CSyncJukeboxSpeakersMessage message = new S2CSyncJukeboxSpeakersMessage(speakerPos, currentDisc, scaledVolume);
-                    ModMessages.sendToAllPlayers(message);
+                    PacketDistributor.sendToAllPlayers(new S2CSyncJukeboxSpeakersMessage(currentDisc, speakerPos, scaledVolume));
                 }
             }
         });
@@ -176,10 +175,9 @@ public class SpeakerLinkUtil {
     // Deactivates ALL speakers linked to Master's Block Pos
     public static void deactivateSpeakersJukebox(ServerLevel level, BlockPos masterBlockPos) {
         getLinkedSpeakersJukebox(level, masterBlockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 speakerBlock.setActive(false, ItemStack.EMPTY);
-                S2CSyncJukeboxOrNoteblockStopMessage message = new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, true);
-                ModMessages.sendToAllPlayers(message);
+                PacketDistributor.sendToAllPlayers(new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, true));
             }
         });
     }
@@ -187,8 +185,7 @@ public class SpeakerLinkUtil {
     public static void deactivateSpeakerJukebox(ServerLevel level, BlockPos speakerPos) {
         if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
             speakerBlock.setActive(false, ItemStack.EMPTY);
-            S2CSyncJukeboxOrNoteblockStopMessage message = new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, false);
-            ModMessages.sendToAllPlayers(message);
+            PacketDistributor.sendToAllPlayers(new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, false));
         }
     }
     // Link speaker to jukebox
@@ -268,7 +265,7 @@ public class SpeakerLinkUtil {
     // Activates all speakers linked to Noteblock
     public static void activateSpeakersNoteblock(ServerLevel level, BlockPos noteblockPos, int note, String instrumentName) {
         getLinkedSpeakersNoteblock(level, noteblockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speaker) {
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speaker) {
                 int volume = speaker.getVolume();
                 float scaledVolume = volume / 100.0F;
 
@@ -281,8 +278,7 @@ public class SpeakerLinkUtil {
                 } else if (!state.is(ModBlocks.CEILING_SPEAKER.get())) {
                     speaker.spawnParticlesForNoteBlock();
                 }
-                S2CSyncNoteblockSpeakersMessage message = new S2CSyncNoteblockSpeakersMessage(speakerPos, instrumentName, note, scaledVolume);
-                ModMessages.sendToAllPlayers(message);
+                PacketDistributor.sendToAllPlayers(new S2CSyncNoteblockSpeakersMessage(speakerPos, instrumentName, note, scaledVolume));
             }
         });
     }

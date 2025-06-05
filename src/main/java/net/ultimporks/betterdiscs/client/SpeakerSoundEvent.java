@@ -8,14 +8,13 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 
 import java.util.HashMap;
@@ -39,7 +38,7 @@ public class SpeakerSoundEvent {
         JukeboxSong.fromStack(registryAccess, currentDisc).ifPresent(songHolder -> {
             JukeboxSong song = songHolder.value();
 
-            SoundEvent soundEvent = song.soundEvent().get();
+            SoundEvent soundEvent = song.soundEvent().value();
 
             Vec3 speakerPosVec = new Vec3(speakerPos.getX(), speakerPos.getY(), speakerPos.getZ());
 

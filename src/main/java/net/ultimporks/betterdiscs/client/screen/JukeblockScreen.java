@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.Reference;
-import net.ultimporks.betterdiscs.init.ModMessages;
 import net.ultimporks.betterdiscs.network.C2S.*;
 import org.jetbrains.annotations.NotNull;
 

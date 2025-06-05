@@ -1,29 +1,30 @@
 package net.ultimporks.betterdiscs.init;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.block.entity.*;
 
+import java.util.function.Supplier;
+
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
-            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MOD_ID);
+            DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Reference.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<RecordPressBlockEntity>> RECORD_PRESS_BE =
+    public static final Supplier<BlockEntityType<RecordPressBlockEntity>> RECORD_PRESS_BE =
             BLOCK_ENTITIES.register("record_press_be", () ->
                     BlockEntityType.Builder.of(RecordPressBlockEntity::new,
                             ModBlocks.RECORD_PRESS.get()).build(null));
 
-    public static final RegistryObject<BlockEntityType<RecordLatheBlockEntity>> RECORD_LATHE_BE =
+    public static final Supplier<BlockEntityType<RecordLatheBlockEntity>> RECORD_LATHE_BE =
             BLOCK_ENTITIES.register("record_lathe_be", () ->
                     BlockEntityType.Builder.of(RecordLatheBlockEntity::new,
                             ModBlocks.RECORD_LATHE.get()).build(null));
 
     // Speakers
-    public static final RegistryObject<BlockEntityType<SpeakerBlockEntity>> SPEAKER_BE =
+    public static final Supplier<BlockEntityType<SpeakerBlockEntity>> SPEAKER_BE =
             BLOCK_ENTITIES.register("speaker_be", () ->
                     BlockEntityType.Builder.of(SpeakerBlockEntity::new,
                             ModBlocks.SPEAKER.get(),

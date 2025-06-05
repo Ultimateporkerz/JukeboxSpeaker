@@ -9,17 +9,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.recipe.RecordLatheRecipe;
 import net.ultimporks.betterdiscs.util.menus.RecordLatheStationMenu;
 
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class RecordLatheStationScreen extends AbstractContainerScreen<RecordLatheStationMenu> {
-    private static final ResourceLocation CRAFT_VANILLA = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/record_lathe_station_gui.png");
+    private static final ResourceLocation CRAFT_VANILLA =
+            ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/record_lathe_station_gui.png");
 
     private float scrollOffs;
     private boolean scrolling;

@@ -2,8 +2,8 @@ package net.ultimporks.betterdiscs.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.ultimporks.betterdiscs.Reference;
 import org.jetbrains.annotations.Nullable;
 

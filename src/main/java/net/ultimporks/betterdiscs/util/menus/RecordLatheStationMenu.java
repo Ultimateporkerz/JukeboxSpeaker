@@ -7,15 +7,13 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import net.ultimporks.betterdiscs.block.entity.RecordLatheBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.init.ModMenuTypes;
 import net.ultimporks.betterdiscs.init.ModRecipes;
 import net.ultimporks.betterdiscs.recipe.RecordLatheRecipe;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,7 +28,6 @@ public class RecordLatheStationMenu extends AbstractContainerMenu {
 
     public RecordLatheStationMenu(int containerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(ModMenuTypes.RECORD_LATHE_STATION_MENU.get(), containerId);
-        checkContainerSize(inv, 2);
         this.blockEntity = ((RecordLatheBlockEntity) entity);
         this.level = inv.player.level();
         this.data = data;
@@ -38,10 +35,9 @@ public class RecordLatheStationMenu extends AbstractContainerMenu {
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
-        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 20, 33));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 143, 33));
-        });
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 0, 20, 33));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 1, 143, 33));
+
         addDataSlots(this.data);
     }
 

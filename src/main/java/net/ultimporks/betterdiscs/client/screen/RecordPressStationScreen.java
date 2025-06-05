@@ -5,12 +5,9 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.util.menus.RecordPressStationMenu;
 
-@OnlyIn(Dist.CLIENT)
 public class RecordPressStationScreen extends AbstractContainerScreen<RecordPressStationMenu> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/record_press_station_gui.png");

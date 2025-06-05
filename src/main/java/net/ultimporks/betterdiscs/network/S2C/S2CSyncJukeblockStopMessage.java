@@ -1,53 +1,28 @@
 package net.ultimporks.betterdiscs.network.S2C;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.ultimporks.betterdiscs.client.JukeblockSoundEvents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.ultimporks.betterdiscs.Reference;
 
-public class S2CSyncJukeblockStopMessage {
-    private final BlockPos blockPos;
-    private final boolean isStoppingAll;
-    private final boolean isSpeaker;
+public record S2CSyncJukeblockStopMessage(BlockPos jukeblockPos, boolean isStoppingAll, boolean isSpeaker) implements CustomPacketPayload {
+    public static final Type<S2CSyncJukeblockStopMessage> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "sync_jukeblock_stop_message"));
 
-    // Jukeblock Constructor
-    public S2CSyncJukeblockStopMessage(BlockPos jukeblockPos) {
-        this.blockPos = jukeblockPos;
-        this.isStoppingAll = false;
-        this.isSpeaker = false;
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, S2CSyncJukeblockStopMessage> STREAM_CODEC =
+            StreamCodec.composite(
+                    BlockPos.STREAM_CODEC, S2CSyncJukeblockStopMessage::jukeblockPos,
+                    ByteBufCodecs.BOOL, S2CSyncJukeblockStopMessage::isStoppingAll,
+                    ByteBufCodecs.BOOL, S2CSyncJukeblockStopMessage::isSpeaker,
+                    S2CSyncJukeblockStopMessage::new
+            );
 
-    // Speaker Constructor
-    public S2CSyncJukeblockStopMessage(BlockPos speakerPos, boolean isStoppingAll) {
-        this.blockPos = speakerPos;
-        this.isStoppingAll = isStoppingAll;
-        this.isSpeaker = true;
-    }
 
-    public S2CSyncJukeblockStopMessage (FriendlyByteBuf buf) {
-        this.blockPos = buf.readBlockPos();
-        this.isStoppingAll = buf.readBoolean();
-        this.isSpeaker = buf.readBoolean();
-    }
-
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeBoolean(isSpeaker);
-        buf.writeBlockPos(blockPos);
-        buf.writeBoolean(isStoppingAll);
-    }
-
-    public void handle(CustomPayloadEvent.Context context) {
-        if (isSpeaker) {
-            JukeblockSoundEvents.stopJukeblockSound(blockPos);
-            context.setPacketHandled(true);
-        } else {
-            if (isStoppingAll) {
-                JukeblockSoundEvents.stopAllSpeakerSounds();
-                context.setPacketHandled(true);
-            } else {
-                JukeblockSoundEvents.stopSpeakerSound(blockPos);
-                context.setPacketHandled(true);
-            }
-        }
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

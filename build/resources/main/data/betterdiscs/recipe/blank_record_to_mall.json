@@ -1,0 +1,12 @@
+{
+  "type": "betterdiscs:record_lathe_station",
+  "ingredient": [
+    {
+      "item": "betterdiscs:blank_music_disc"
+    }
+  ],
+  "result": {
+    "id": "minecraft:music_disc_mall",
+    "count": 1
+  }
+}

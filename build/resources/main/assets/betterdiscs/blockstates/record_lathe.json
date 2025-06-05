@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "betterdiscs:block/record_lathe",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "betterdiscs:block/record_lathe"
+    },
+    "facing=south": {
+      "model": "betterdiscs:block/record_lathe",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "betterdiscs:block/record_lathe",
+      "y": 270
+    }
+  }
+}
