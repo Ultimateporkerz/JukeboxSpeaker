@@ -97,6 +97,7 @@ public class RecordPressBlockEntity extends BlockEntity implements MenuProvider 
     }
     @Override
     public void loadAdditional(CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
+
         itemHandler.deserializeNBT(pRegistries, pTag.getCompound("inventory"));
         progress = pTag.getInt("record_press_progress");
         super.loadAdditional(pTag, pRegistries);

@@ -9,6 +9,7 @@ import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.ultimporks.betterdiscs.Reference;
+import net.ultimporks.betterdiscs.util.menus.JukeblockMenu;
 import net.ultimporks.betterdiscs.util.menus.RecordLatheStationMenu;
 import net.ultimporks.betterdiscs.util.menus.RecordPressStationMenu;
 import net.ultimporks.betterdiscs.util.menus.SpeakerMenus;
@@ -26,8 +27,8 @@ public class ModMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<SpeakerMenus>> SPEAKER_MENU =
             registerMenuType("speaker_menu", SpeakerMenus::new);
 
-   // public static final DeferredHolder<MenuType<?>, MenuType<JukeblockMenu>> JUKEBOX_MENU =
-         //   registerMenuType("jukebox_menu", JukeblockMenu::new);
+    public static final DeferredHolder<MenuType<?>, MenuType<JukeblockMenu>> JUKEBOX_MENU =
+            registerMenuType("jukebox_menu", JukeblockMenu::new);
 
     private static <T extends AbstractContainerMenu>DeferredHolder<MenuType<?>, MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IMenuTypeExtension.create(factory));

@@ -1,5 +1,6 @@
-// 1.21.1	2025-06-05T03:19:40.8778744	Loot Tables
+// 1.21.1	2025-06-19T01:19:02.318672	Loot Tables
 8659c1c9c0950b3c55bc59de5e69017175dd462e data/betterdiscs/loot_table/blocks/ceiling_speaker.json
+ada287a0c4edf11e59cde7f47028065f1960f1b9 data/betterdiscs/loot_table/blocks/jukeblock.json
 ddeb714aa2c6bf4767765e4d7dccb55b529d13cb data/betterdiscs/loot_table/blocks/record_lathe.json
 16796d5b965d3058fa26daa84864cd2fa09807ad data/betterdiscs/loot_table/blocks/record_press.json
 46285a7ed43a5399558f8c8bcf06f5d9217dea1d data/betterdiscs/loot_table/blocks/speaker.json

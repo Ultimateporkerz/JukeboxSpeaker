@@ -18,14 +18,21 @@ public class ModBlocks {
             DeferredRegister.createBlocks(Reference.MOD_ID);
 
     public static final DeferredBlock<Block> RECORD_PRESS = registerBlock("record_press",
-            () -> new RecordPressBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(4.0F, 6.0F).sound(SoundType.METAL)));
+            () -> new RecordPressBlock(BlockBehaviour.Properties.of()
+                    .requiresCorrectToolForDrops()
+                    .strength(4.0F, 6.0F)
+                    .sound(SoundType.METAL)));
 
     public static final DeferredBlock<Block> RECORD_LATHE = registerBlock("record_lathe",
-            () -> new RecordLatheBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(4.0F, 5.5F).destroyTime(5.0F).sound(SoundType.METAL)));
+            () -> new RecordLatheBlock(BlockBehaviour.Properties.of()
+                    .requiresCorrectToolForDrops()
+                    .strength(4.0F, 5.5F)
+                    .destroyTime(5.0F)
+                    .sound(SoundType.METAL)));
 
     // Jukeblock
-   // public static final RegistryObject<Block> JUKEBLOCK = registerBlock("jukeblock",
-          //  () -> new JukeblockBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.5F, 4.0F).destroyTime(3.0F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> JUKEBLOCK = registerBlock("jukeblock",
+            () -> new JukeblockBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.5F, 4.0F).destroyTime(3.0F).sound(SoundType.WOOD)));
 
     // Base Speaker Block
     public static final DeferredBlock<Block> SPEAKER = registerBlock("speaker",

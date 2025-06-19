@@ -42,9 +42,13 @@ public class SpeakerSoundEvent {
 
             Vec3 speakerPosVec = new Vec3(speakerPos.getX(), speakerPos.getY(), speakerPos.getZ());
 
-            SoundInstance musicInstance = SimpleSoundInstance.forJukeboxSong(
+            SoundInstance musicInstance = new SimpleSoundInstance(
                     soundEvent,
-                    speakerPosVec
+                    SoundSource.BLOCKS,
+                    volume,
+                    1.0f,
+                    SoundInstance.createUnseededRandom(),
+                    speakerPos
             );
 
             SoundInfo firstSoundInfo = new SoundInfo(

@@ -22,7 +22,6 @@ public class TuningToolTagHelper {
         tuningTool.remove(ModDataComponents.SPEAKER_POS.get());
         return true;
     }
-    /*
     // Jukeblock Tag methods
     public static void saveJukeblockPosToTag(ItemStack tuningTool, BlockPos clickedPos) {
         tuningTool.set(ModDataComponents.JUKEBLOCK_POS.get(), clickedPos);
@@ -39,7 +38,6 @@ public class TuningToolTagHelper {
         tuningTool.remove(ModDataComponents.JUKEBLOCK_POS.get());
         return true;
     }
-    */
     // Jukebox Tag methods
     public static void saveJukeboxPosToTag(ItemStack tuningTool, BlockPos clickedPos) {
         tuningTool.set(ModDataComponents.JUKEBOX_POS.get(), clickedPos);

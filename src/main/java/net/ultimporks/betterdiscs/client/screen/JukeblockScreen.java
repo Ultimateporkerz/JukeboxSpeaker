@@ -5,12 +5,12 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.network.C2S.*;
+import net.ultimporks.betterdiscs.util.menus.JukeblockMenu;
 import org.jetbrains.annotations.NotNull;
-
-/*
 
 public class JukeblockScreen extends AbstractContainerScreen<JukeblockMenu> {
     private static final ResourceLocation JUKEBOX_SCREEN = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/jukebox_gui.png");
@@ -68,8 +68,7 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeblockMenu> {
             sliderX = Math.max(sliderMinX, Math.min(sliderX, sliderMaxX));
 
             int newVolume = getNewVolume();
-            C2SSyncVolumeMessage message = new C2SSyncVolumeMessage(newVolume, menu.getJukeblockPos());
-            ModMessages.sendToServer(message);
+            PacketDistributor.sendToServer(new C2SSyncVolumeMessage(menu.getJukeblockPos(), newVolume));
             return true;
         }
         return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
@@ -183,10 +182,10 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeblockMenu> {
         if (isWithinBounds(mouseX, mouseY, x + 8, y + 64, 12, 11)) {
             if (particlesEnabled) {
                 // Disable
-                ModMessages.sendToServer(new C2SSyncParticleMessage(false, menu.getJukeblockPos()));
+                PacketDistributor.sendToServer(new C2SSyncParticleMessage(menu.getJukeblockPos(), false));
             } else {
                 // Enable
-                ModMessages.sendToServer(new C2SSyncParticleMessage(true, menu.getJukeblockPos()));
+                PacketDistributor.sendToServer(new C2SSyncParticleMessage(menu.getJukeblockPos(), true));
             }
             return true;
         }
@@ -195,7 +194,7 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeblockMenu> {
         if (isWithinBounds(mouseX, mouseY, x + 42, y + 51, 35, 12)) {
             if (!playing) {
                 BetterMusicDiscs.generalLOGGING("Play Button Clicked!");
-                ModMessages.sendToServer(new C2SSyncPlayButtonMessage(menu.getJukeblockPos()));
+                PacketDistributor.sendToServer(new C2SSyncPlayButtonMessage(menu.getJukeblockPos()));
                 return true;
             }
         }
@@ -204,7 +203,7 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeblockMenu> {
         if (isWithinBounds(mouseX, mouseY, x + 97, y + 51, 35, 12)) {
             if (!stopped) {
                 BetterMusicDiscs.generalLOGGING("Stop Button Clicked!");
-                ModMessages.sendToServer(new C2SSyncStopButtonMessage(menu.getJukeblockPos()));
+                PacketDistributor.sendToServer(new C2SSyncStopButtonMessage(menu.getJukeblockPos()));
                 return true;
             }
         }
@@ -215,5 +214,3 @@ public class JukeblockScreen extends AbstractContainerScreen<JukeblockMenu> {
     }
 
 }
-
- */

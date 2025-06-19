@@ -38,7 +38,7 @@ public class WallSpeakerBlock extends SpeakerBlock {
     @Override
     public BlockState rotate(BlockState pState, Rotation pRotation) {
         return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
-    }
+   }
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         Direction direction = pContext.getHorizontalDirection();

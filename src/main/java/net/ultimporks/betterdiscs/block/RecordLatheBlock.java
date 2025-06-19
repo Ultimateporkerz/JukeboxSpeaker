@@ -4,9 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -51,17 +49,15 @@ public class RecordLatheBlock extends BaseEntityBlock {
     }
     @Override
     public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
-        if (!pLevel.isClientSide) {
+        if (pLevel.isClientSide) return InteractionResult.sidedSuccess(true);
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            MenuProvider menuProvider = this.getMenuProvider(pState, pLevel, pPos);
+
             if (entity instanceof RecordLatheBlockEntity recordLatheBlockEntity) {
-                ((ServerPlayer) pPlayer).openMenu(new SimpleMenuProvider
-                        (recordLatheBlockEntity, Component.literal("Record Lathe")), pPos);
+                pPlayer.openMenu(new SimpleMenuProvider(recordLatheBlockEntity, Component.literal("Record Lathe")), pPos);
             } else {
                 throw new IllegalStateException("Container Provider is missing!");
             }
-        }
-        return InteractionResult.sidedSuccess(pLevel.isClientSide);
+        return InteractionResult.sidedSuccess(false);
     }
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {

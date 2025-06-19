@@ -37,8 +37,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(ResourceLocation.
                         fromNamespaceAndPath(Reference.MOD_ID, "block/wall_speaker")));
 
-        //  horizontalBlock(ModBlocks.JUKEBLOCK.get(),
-            //  new ModelFile.UncheckedModelFile("block/jukeblock);
+        horizontalBlock(ModBlocks.JUKEBLOCK.get(),
+                new ModelFile.UncheckedModelFile(ResourceLocation.
+                        fromNamespaceAndPath(Reference.MOD_ID, "block/jukeblock")));
     }
 
     // Helper Method

@@ -9,6 +9,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.ultimporks.betterdiscs.client.entity.renderer.RecordLatheBlockEntityRenderer;
 import net.ultimporks.betterdiscs.client.entity.renderer.RecordPressBlockEntityRenderer;
+import net.ultimporks.betterdiscs.client.screen.JukeblockScreen;
 import net.ultimporks.betterdiscs.client.screen.RecordLatheStationScreen;
 import net.ultimporks.betterdiscs.client.screen.RecordPressStationScreen;
 import net.ultimporks.betterdiscs.client.screen.SpeakerScreen;
@@ -21,11 +22,11 @@ import org.apache.logging.log4j.Logger;
 @Mod(Reference.MOD_ID)
 public class BetterMusicDiscs {
     // Debugging
-    private static final boolean debuggingJukebox = true;
-    private static final boolean debuggingNoteblock = true;
-    private static final boolean debuggingJukeblock = true;
-    private static final boolean debuggingSpeaker = true;
-    private static final boolean debuggingGeneral = true;
+    private static final boolean debuggingJukebox = false;
+    private static final boolean debuggingNoteblock = false;
+    private static final boolean debuggingJukeblock = false;
+    private static final boolean debuggingSpeaker = false;
+    private static final boolean debuggingGeneral = false;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -75,7 +76,7 @@ public class BetterMusicDiscs {
             event.register(ModMenuTypes.RECORD_LATHE_STATION_MENU.get(), RecordLatheStationScreen::new);
             event.register(ModMenuTypes.RECORD_PRESS_STATION_MENU.get(), RecordPressStationScreen::new);
             event.register(ModMenuTypes.SPEAKER_MENU.get(), SpeakerScreen::new);
-            // event.register(ModMenuTypes.JUKEBOX_MENU.get(), JukeblockScreen::new);
+            event.register(ModMenuTypes.JUKEBOX_MENU.get(), JukeblockScreen::new);
         }
 
         @SubscribeEvent

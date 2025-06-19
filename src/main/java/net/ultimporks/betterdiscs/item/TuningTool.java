@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
+import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 import net.ultimporks.betterdiscs.util.SpeakerLinkUtil;
 import net.ultimporks.betterdiscs.util.TuningToolTagHelper;
@@ -46,11 +47,11 @@ public class TuningTool extends Item {
             }
         }
         // Handle Jukeblock Interaction
-    //    if (blockEntity instanceof JukeblockBlockEntity) {
-    //        if (handleJukeblockEntity(player, blockPos, serverLevel, tuningTool)) {
-    //            return InteractionResult.SUCCESS_NO_ITEM_USED;
-    //        }
-    //    }
+        if (blockEntity instanceof JukeblockBlockEntity) {
+           if (handleJukeblockEntity(player, blockPos, serverLevel, tuningTool)) {
+               return InteractionResult.SUCCESS_NO_ITEM_USED;
+           }
+       }
         // Handle Jukebox Interaction
         if (blockEntity instanceof JukeboxBlockEntity) {
             BetterMusicDiscs.generalLOGGING("Clicked block is JukeboxBlockEntity");
@@ -107,12 +108,12 @@ public class TuningTool extends Item {
                 }
             }
 
-        //    if (SpeakerLinkUtil.isSpeakerLinked(level, speakerPos).equals("Jukeblock")) {
-        //        if (SpeakerLinkUtil.unlinkSpeakerJukeblock(level, speakerPos)) {
-        //            player.sendSystemMessage(Component.literal("Speaker unlinked from Jukeblock!").withStyle(ChatFormatting.GREEN));
-        //            return true;
-        //        }
-        //    }
+           if (SpeakerLinkUtil.isSpeakerLinked(level, speakerPos).equals("Jukeblock")) {
+               if (SpeakerLinkUtil.unlinkSpeakerJukeblock(level, speakerPos)) {
+                   player.sendSystemMessage(Component.literal("Speaker unlinked from Jukeblock!").withStyle(ChatFormatting.GREEN));
+                   return true;
+               }
+           }
         }
         // Link mode if player is NOT holding shift
         if (!player.isShiftKeyDown()) {
@@ -159,14 +160,14 @@ public class TuningTool extends Item {
             }
 
             // Check player tags for (Jukeblock / Jukebox / Noteblock)
-        //    if (TuningToolTagHelper.hasJukeblockTags(tuningTool) && !TuningToolTagHelper.hasJukeboxTags(tuningTool) && !TuningToolTagHelper.hasNoteBlockTags(tuningTool)) {
-        //        BlockPos jukeblockPos = TuningToolTagHelper.getJukeblockPosFromTag(tuningTool);
-        //        if (SpeakerLinkUtil.linkSpeakerJukeblock(level, jukeblockPos, speakerPos)) {
-        //            player.sendSystemMessage(Component.literal("Link Completed!").withStyle(ChatFormatting.GREEN));
-        //            TuningToolTagHelper.removeJukeblockTags(tuningTool);
-        //            return true;
-        //        }
-        //    }
+           if (TuningToolTagHelper.hasJukeblockTags(tuningTool) && !TuningToolTagHelper.hasJukeboxTags(tuningTool) && !TuningToolTagHelper.hasNoteBlockTags(tuningTool)) {
+               BlockPos jukeblockPos = TuningToolTagHelper.getJukeblockPosFromTag(tuningTool);
+               if (SpeakerLinkUtil.linkSpeakerJukeblock(level, jukeblockPos, speakerPos)) {
+            player.sendSystemMessage(Component.literal("Link Completed!").withStyle(ChatFormatting.GREEN));
+                   TuningToolTagHelper.removeJukeblockTags(tuningTool);
+                   return true;
+               }
+           }
 
             // If player didn't have Jukebox, NoteBlock, or Jukeblock tags saved, save the Speaker pos to Tag
             if (!TuningToolTagHelper.hasJukeboxTags(tuningTool) || !TuningToolTagHelper.hasNoteBlockTags(tuningTool) /* || !TuningToolTagHelper.hasJukeblockTags(tuningTool) */) {
@@ -178,7 +179,6 @@ public class TuningTool extends Item {
         return false;
     }
 
-    /*
     // Custom jukeblockEntity Handler
     private boolean handleJukeblockEntity(Player player, BlockPos jukeblockPos, ServerLevel level, ItemStack tuningTool) {
         // Prevent player from linking Jukebox to Jukeblock
@@ -211,7 +211,6 @@ public class TuningTool extends Item {
         }
         return false;
     }
-     */
 
     // JukeboxEntity Handler
     private boolean handleJukeboxEntity(Player player, BlockPos jukeboxPos, ServerLevel level, ItemStack tuningTool) {
@@ -221,12 +220,10 @@ public class TuningTool extends Item {
             TuningToolTagHelper.removeNoteBlockTags(tuningTool);
             return false;
         }
-        /*
         // Prevent player from linking Jukeblock to Jukebox
         if (TuningToolTagHelper.hasJukeblockTags(tuningTool)) {
             player.sendSystemMessage(Component.literal("Removing Jukeblock tags before linking Jukebox, please try again.").withStyle(ChatFormatting.YELLOW));
         }
-         */
 
         // Check if speakerPos is saved
         if (TuningToolTagHelper.hasSpeakerTags(tuningTool)) {
@@ -256,14 +253,13 @@ public class TuningTool extends Item {
             TuningToolTagHelper.removeJukeboxTags(tuningTool);
             return false;
         }
-        /*
+
         // Prevent player from linking Jukeblock to Noteblock
         if (TuningToolTagHelper.hasJukeblockTags(tuningTool)) {
             player.sendSystemMessage(Component.literal("Removing Jukeblock tags before linking Jukeblock, please try again.").withStyle(ChatFormatting.YELLOW));
             TuningToolTagHelper.removeJukeblockTags(tuningTool);
             return false;
         }
-         */
 
         // Check if player has a SpeakerPos saved, if so link Speaker to NoteBlock
         if (TuningToolTagHelper.hasSpeakerTags(tuningTool)) {

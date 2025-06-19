@@ -16,12 +16,14 @@ public class ModBlockEntities {
     public static final Supplier<BlockEntityType<RecordPressBlockEntity>> RECORD_PRESS_BE =
             BLOCK_ENTITIES.register("record_press_be", () ->
                     BlockEntityType.Builder.of(RecordPressBlockEntity::new,
-                            ModBlocks.RECORD_PRESS.get()).build(null));
+                            ModBlocks.RECORD_PRESS.get())
+                            .build(null));
 
     public static final Supplier<BlockEntityType<RecordLatheBlockEntity>> RECORD_LATHE_BE =
             BLOCK_ENTITIES.register("record_lathe_be", () ->
                     BlockEntityType.Builder.of(RecordLatheBlockEntity::new,
-                            ModBlocks.RECORD_LATHE.get()).build(null));
+                            ModBlocks.RECORD_LATHE.get())
+                            .build(null));
 
     // Speakers
     public static final Supplier<BlockEntityType<SpeakerBlockEntity>> SPEAKER_BE =
@@ -33,10 +35,11 @@ public class ModBlockEntities {
                             .build(null));
 
     // Jukebox
-  //  public static final RegistryObject<BlockEntityType<JukeblockBlockEntity>> JUKEBOX_BE =
-  //          BLOCK_ENTITIES.register("jukebox_be", () ->
-  //                  BlockEntityType.Builder.of(JukeblockBlockEntity::new,
-  //                          ModBlocks.JUKEBLOCK.get()).build(null));
+    public static final Supplier<BlockEntityType<JukeblockBlockEntity>> JUKEBOX_BE =
+           BLOCK_ENTITIES.register("jukebox_be", () ->
+                   BlockEntityType.Builder.of(JukeblockBlockEntity::new,
+                           ModBlocks.JUKEBLOCK.get())
+                           .build(null));
 
 
     public static void register(IEventBus eventBus) {

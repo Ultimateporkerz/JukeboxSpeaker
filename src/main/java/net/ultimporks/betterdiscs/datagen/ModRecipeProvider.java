@@ -6,6 +6,7 @@ import net.minecraft.data.recipes.*;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.init.ModItems;
@@ -72,7 +73,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(ModBlocks.CEILING_SPEAKER.get())
                 .unlockedBy(getHasName(ModBlocks.CEILING_SPEAKER.get()), has(ModBlocks.CEILING_SPEAKER.get()))
                 .save(pRecipeOutput);
-        /*
         // Jukeblock
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.JUKEBLOCK.get())
                 .pattern("WWW")
@@ -84,7 +84,5 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', ItemTags.PLANKS)
                 .unlockedBy(getHasName(Blocks.JUKEBOX), has(Blocks.JUKEBOX))
                 .save(pRecipeOutput);
-         */
-
     }
 }
