@@ -43,6 +43,8 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         }
     };
 
+    private final List<ItemStack> playedRecords = new ArrayList<>();
+
     // Playing music
     private int isPlaying = 100;
     private int isStopped = 200;
@@ -112,26 +114,22 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
             }
         }
         ++this.tickCount;
+        // Check if the Playing record is still in the inventory, if not stop playing!
+        if (!isPlayingDiscInInventory()) {
+            stopPlaying();
+        }
     }
 
-    public void startPlaying() {
-        this.recordStartedTick = this.tickCount;
-        this.currentDisc = selectRandomDisc();
-        this.setPlaying();
-        this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
-        this.setChanged();
-
-        // Send Sound Packets to Clients
-        SpeakerLinkUtil.activateJukeblock((ServerLevel) level, this.worldPosition, this.currentDisc);
-        SpeakerLinkUtil.activateSpeakersJukeblock((ServerLevel) level, this.worldPosition, this.currentDisc);
-    }
-    public void stopPlaying() {
-        this.currentDisc = ItemStack.EMPTY;
-        this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
-        this.setChanged();
-
-        SpeakerLinkUtil.deactivateJukeblock((ServerLevel) level, this.worldPosition);
-        SpeakerLinkUtil.deactivateSpeakersJukeblock((ServerLevel) level, this.worldPosition);
+    public boolean isPlayingDiscInInventory() {
+        if (currentDisc != null) {
+            for (int i = 0; i < itemHandler.getSlots(); i++) {
+                ItemStack stack = itemHandler.getStackInSlot(i);
+                if (!stack.isEmpty() && stack.is(currentDisc.getItem())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void shuffleNext() {
@@ -157,29 +155,39 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         SpeakerLinkUtil.activateJukeblock((ServerLevel) level, this.worldPosition, this.currentDisc);
         SpeakerLinkUtil.activateSpeakersJukeblock((ServerLevel) level, this.worldPosition, this.currentDisc);
     }
-
     public ItemStack selectRandomDisc() {
-        List<ItemStack> availableSlots = new ArrayList<>();
+        List<ItemStack> discs = new ArrayList<>();
 
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stack = itemHandler.getStackInSlot(i);
 
             if (!stack.isEmpty() && stack.getItem() instanceof RecordItem) {
-                availableSlots.add(stack);
+                discs.add(stack);
             }
         }
 
-        if (availableSlots.isEmpty()) {
+        if (discs.isEmpty()) return ItemStack.EMPTY;
+
+        if (discs.size() > 1 && !currentDisc.isEmpty()) {
+            discs.removeIf(stack -> ItemStack.isSameItem(stack, currentDisc));
+        }
+
+        // Remove discs that have already been played
+        if (discs.size() > 1) {
+            discs.removeIf(stack -> playedRecords.stream().anyMatch(p -> ItemStack.isSameItem(p, stack)));
+        }
+
+        // If all have been played, stop and reset the list.
+        if (discs.isEmpty()) {
+            playedRecords.clear();
+            this.stopPlaying();
             return ItemStack.EMPTY;
         }
 
-        if (availableSlots.size() > 1 && currentDisc != null) {
-            availableSlots.removeIf(stack -> ItemStack.isSameItem(stack, currentDisc));
-            if (availableSlots.isEmpty()) {
-                return ItemStack.EMPTY;
-            }
-        }
-        return availableSlots.get(new Random().nextInt(availableSlots.size()));
+        // Pick a random disc and play it
+        ItemStack selected = discs.get(level.random.nextInt(discs.size()));
+        playedRecords.add(selected.copy());
+        return selected;
     }
 
     private boolean shouldRecordStopPlaying(RecordItem pRecord) {
@@ -209,6 +217,17 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         }
         return isActive == itsTrue;
     }
+    public void startPlaying() {
+        this.recordStartedTick = this.tickCount;
+        this.currentDisc = selectRandomDisc();
+        this.setPlaying();
+        this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
+        this.setChanged();
+
+        // Send Sound Packets to Clients
+        SpeakerLinkUtil.activateJukeblock((ServerLevel) level, this.worldPosition, this.currentDisc);
+        SpeakerLinkUtil.activateSpeakersJukeblock((ServerLevel) level, this.worldPosition, this.currentDisc);
+    }
 
     // Stop
     public void setStopped() {
@@ -232,6 +251,14 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
             return false;
         }
         return isStopped == itsTrue;
+    }
+    public void stopPlaying() {
+        this.currentDisc = ItemStack.EMPTY;
+        this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
+        this.setChanged();
+
+        SpeakerLinkUtil.deactivateJukeblock((ServerLevel) level, this.worldPosition);
+        SpeakerLinkUtil.deactivateSpeakersJukeblock((ServerLevel) level, this.worldPosition);
     }
 
     // Volume
