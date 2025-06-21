@@ -26,7 +26,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.CEILING_SPEAKER.get());
                         output.accept(ModBlocks.WALL_SPEAKER.get());
                         output.accept(ModItems.TUNING_TOOL.get());
-                    //    output.accept(ModBlocks.JUKEBLOCK.get());
+                        output.accept(ModBlocks.JUKEBLOCK.get());
                     }).build());
 
 

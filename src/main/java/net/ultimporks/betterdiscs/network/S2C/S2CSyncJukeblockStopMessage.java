@@ -31,9 +31,9 @@ public class S2CSyncJukeblockStopMessage {
     }
 
     public void encode(FriendlyByteBuf buf) {
-        buf.writeBoolean(isSpeaker);
         buf.writeBlockPos(blockPos);
         buf.writeBoolean(isStoppingAll);
+        buf.writeBoolean(isSpeaker);
     }
 
     public void handle(CustomPayloadEvent.Context context) {

@@ -5,24 +5,25 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 
-public class C2SSyncVolumeMessage {
-    private final int volume;
+public class C2SParticleMessage {
+    private final boolean particlesEnabled;
     private final BlockPos blockPos;
 
-    public C2SSyncVolumeMessage(int volume, BlockPos blockPos) {
-        this.volume = volume;
+    public C2SParticleMessage(boolean particlesEnabled, BlockPos blockPos) {
+        this.particlesEnabled = particlesEnabled;
         this.blockPos = blockPos;
     }
 
-    public C2SSyncVolumeMessage (FriendlyByteBuf buf) {
-        this.volume = buf.readInt();
+    public C2SParticleMessage(FriendlyByteBuf buf) {
+        this.particlesEnabled = buf.readBoolean();
         this.blockPos = buf.readBlockPos();
     }
 
     public void encode(FriendlyByteBuf buf) {
-        buf.writeInt(volume);
+        buf.writeBoolean(particlesEnabled);
         buf.writeBlockPos(blockPos);
     }
 
@@ -31,11 +32,13 @@ public class C2SSyncVolumeMessage {
         if (player != null) {
             BlockEntity blockEntity = player.level().getExistingBlockEntity(blockPos);
             if (blockEntity instanceof SpeakerBlockEntity speakerBlock) {
-                speakerBlock.setVolume(volume);
+                speakerBlock.setParticlesEnabled(particlesEnabled);
                 context.setPacketHandled(true);
-        //    } else if (blockEntity instanceof JukeblockBlockEntity jukeblockBlock) {
-        //        jukeblockBlock.setVolume(volume);
-        //        context.setPacketHandled(true);
+            }
+
+            if (blockEntity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
+                jukeblockBlockEntity.setParticlesEnabled(particlesEnabled);
+                context.setPacketHandled(true);
             }
         }
     }

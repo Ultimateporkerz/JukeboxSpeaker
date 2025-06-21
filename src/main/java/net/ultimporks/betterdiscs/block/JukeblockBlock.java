@@ -22,10 +22,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import net.ultimporks.betterdiscs.item.TuningTool;
-
-/*
 
 public class JukeblockBlock extends BaseEntityBlock {
     public static final MapCodec<JukeblockBlock> CODEC = simpleCodec(JukeblockBlock::new);
@@ -98,5 +97,3 @@ public class JukeblockBlock extends BaseEntityBlock {
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 }
-
- */

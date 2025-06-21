@@ -15,9 +15,9 @@ public class BetterMusicDiscs {
     // Debugging
     private static final boolean debuggingJukebox = false;
     private static final boolean debuggingNoteblock = false;
-    private static final boolean debuggingJukeblock = false;
-    private static final boolean debuggingSpeaker = false;
-    private static final boolean debuggingGeneral = false;
+    private static final boolean debuggingJukeblock = true;
+    private static final boolean debuggingSpeaker = true;
+    private static final boolean debuggingGeneral = true;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -62,7 +62,7 @@ public class BetterMusicDiscs {
     }
     public static void generalLOGGING(String logMessage) {
         if (debuggingGeneral) {
-            LOGGER.info("BetterMusicDiscs LOGGER - TUNING_TOOL - {}", logMessage);
+            LOGGER.info("BetterMusicDiscs LOGGER - GENERAL LOGGING - {}", logMessage);
         }
     }
 }

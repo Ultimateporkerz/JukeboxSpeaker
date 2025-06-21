@@ -5,24 +5,25 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 
-public class C2SSyncParticleMessage {
-    private final boolean particlesEnabled;
+public class C2SVolumeMessage {
+    private final int volume;
     private final BlockPos blockPos;
 
-    public C2SSyncParticleMessage(boolean particlesEnabled, BlockPos blockPos) {
-        this.particlesEnabled = particlesEnabled;
+    public C2SVolumeMessage(int volume, BlockPos blockPos) {
+        this.volume = volume;
         this.blockPos = blockPos;
     }
 
-    public C2SSyncParticleMessage (FriendlyByteBuf buf) {
-        this.particlesEnabled = buf.readBoolean();
+    public C2SVolumeMessage(FriendlyByteBuf buf) {
+        this.volume = buf.readInt();
         this.blockPos = buf.readBlockPos();
     }
 
     public void encode(FriendlyByteBuf buf) {
-        buf.writeBoolean(particlesEnabled);
+        buf.writeInt(volume);
         buf.writeBlockPos(blockPos);
     }
 
@@ -31,14 +32,12 @@ public class C2SSyncParticleMessage {
         if (player != null) {
             BlockEntity blockEntity = player.level().getExistingBlockEntity(blockPos);
             if (blockEntity instanceof SpeakerBlockEntity speakerBlock) {
-                speakerBlock.setParticlesEnabled(particlesEnabled);
+                speakerBlock.setVolume(volume);
+                context.setPacketHandled(true);
+            } else if (blockEntity instanceof JukeblockBlockEntity jukeblockBlock) {
+                jukeblockBlock.setVolume(volume);
                 context.setPacketHandled(true);
             }
-
-        //    if (blockEntity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
-        //        jukeblockBlockEntity.setParticlesEnabled(particlesEnabled);
-        //        context.setPacketHandled(true);
-        //    }
         }
     }
 }

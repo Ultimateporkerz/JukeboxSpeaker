@@ -8,12 +8,11 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
+import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.init.ModBlocks;
 import net.ultimporks.betterdiscs.init.ModMenuTypes;
 
-/*
 public class JukeblockMenu extends AbstractContainerMenu {
     public final JukeblockBlockEntity blockEntity;
     private final Level level;
@@ -33,27 +32,27 @@ public class JukeblockMenu extends AbstractContainerMenu {
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
-        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 8, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 26, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 2, 44, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 3, 62, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 4, 80, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 5, 98, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 6, 116, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 7, 134, 8));
-            this.addSlot(new SlotItemHandler(iItemHandler, 8, 152, 8));
 
-            this.addSlot(new SlotItemHandler(iItemHandler, 9, 8, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 10, 26, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 11, 44, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 12, 62, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 13, 80, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 14, 98, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 15, 116, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 16, 134, 26));
-            this.addSlot(new SlotItemHandler(iItemHandler, 17, 152, 26));
-        });
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 0, 8, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 1, 26, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 2, 44, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 3, 62, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 4, 80, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 5, 98, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 6, 116, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 7, 134, 8));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 8, 152, 8));
+
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 9, 8, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 10, 26, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 11, 44, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 12, 62, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 13, 80, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 14, 98, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 15, 116, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 16, 134, 26));
+        this.addSlot(new SlotItemHandler(blockEntity.itemHandler, 17, 152, 26));
+
         addDataSlots(this.data);
     }
 
@@ -132,8 +131,4 @@ public class JukeblockMenu extends AbstractContainerMenu {
         sourceSlot.onTake(playerIn, sourceStack);
         return copyOfSourceStack;
     }
-
-
 }
-
- */

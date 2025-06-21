@@ -11,8 +11,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.ultimporks.betterdiscs.Reference;
 import net.ultimporks.betterdiscs.init.ModMessages;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncVolumeMessage;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncParticleMessage;
+import net.ultimporks.betterdiscs.network.C2S.C2SVolumeMessage;
+import net.ultimporks.betterdiscs.network.C2S.C2SParticleMessage;
 import net.ultimporks.betterdiscs.util.menus.SpeakerMenus;
 
 @OnlyIn(Dist.CLIENT)
@@ -73,7 +73,7 @@ public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
             sliderX = Math.max(sliderMinX, Math.min(sliderX, sliderMaxX)); // Clamp within bounds
 
             int newVolume = getNewVolume();
-            C2SSyncVolumeMessage message = new C2SSyncVolumeMessage(newVolume, menu.getSpeakerPos());
+            C2SVolumeMessage message = new C2SVolumeMessage(newVolume, menu.getSpeakerPos());
             ModMessages.sendToServer(message);
             return true;
         }
@@ -153,10 +153,10 @@ public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
         if (isWithinBounds(mouseX, mouseY, this.leftPos + 17, this.topPos + 12, 12, 12)) {
             if (particlesEnabled) {
                 // Disable
-                ModMessages.sendToServer(new C2SSyncParticleMessage(false, menu.getSpeakerPos()));
+                ModMessages.sendToServer(new C2SParticleMessage(false, menu.getSpeakerPos()));
             } else {
                 // Enable
-                ModMessages.sendToServer(new C2SSyncParticleMessage(true, menu.getSpeakerPos()));
+                ModMessages.sendToServer(new C2SParticleMessage(true, menu.getSpeakerPos()));
             }
             return true;
         }

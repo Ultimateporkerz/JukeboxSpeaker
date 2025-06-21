@@ -2,7 +2,6 @@ package net.ultimporks.betterdiscs.init;
 
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
@@ -55,31 +54,23 @@ public class ModMessages {
                 .add();
 
         // PLAY TO SERVER
-        INSTANCE.messageBuilder(C2SSyncParticleMessage.class, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(C2SSyncParticleMessage::encode)
-                .decoder(C2SSyncParticleMessage::new)
-                .consumerMainThread(C2SSyncParticleMessage::handle)
+        INSTANCE.messageBuilder(C2SParticleMessage.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SParticleMessage::encode)
+                .decoder(C2SParticleMessage::new)
+                .consumerMainThread(C2SParticleMessage::handle)
                 .add();
 
-        INSTANCE.messageBuilder(C2SSyncVolumeMessage.class, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(C2SSyncVolumeMessage::encode)
-                .decoder(C2SSyncVolumeMessage::new)
-                .consumerMainThread(C2SSyncVolumeMessage::handle)
+        INSTANCE.messageBuilder(C2SVolumeMessage.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SVolumeMessage::encode)
+                .decoder(C2SVolumeMessage::new)
+                .consumerMainThread(C2SVolumeMessage::handle)
                 .add();
 
-        INSTANCE.messageBuilder(C2SSyncPlayButtonMessage.class, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(C2SSyncPlayButtonMessage::encode)
-                .decoder(C2SSyncPlayButtonMessage::new)
-                .consumerMainThread(C2SSyncPlayButtonMessage::handle)
+        INSTANCE.messageBuilder(C2SButtonMessage.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SButtonMessage::encode)
+                .decoder(C2SButtonMessage::new)
+                .consumerMainThread(C2SButtonMessage::handle)
                 .add();
-
-        INSTANCE.messageBuilder(C2SSyncStopButtonMessage.class, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(C2SSyncStopButtonMessage::encode)
-                .decoder(C2SSyncStopButtonMessage::new)
-                .consumerMainThread(C2SSyncStopButtonMessage::handle)
-                .add();
-
-
     }
 
     public static <MSG> void sendToServer(MSG msg) {

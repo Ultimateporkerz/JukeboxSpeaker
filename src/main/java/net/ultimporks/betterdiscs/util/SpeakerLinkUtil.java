@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
+import net.ultimporks.betterdiscs.block.entity.JukeblockBlockEntity;
 import net.ultimporks.betterdiscs.block.entity.SpeakerBlockEntity;
 import net.ultimporks.betterdiscs.data.SpeakerLinkData;
 import net.ultimporks.betterdiscs.init.ModBlocks;
@@ -18,43 +19,35 @@ import net.ultimporks.betterdiscs.network.S2C.*;
 import java.util.*;
 
 public class SpeakerLinkUtil {
-    private static final Map<ServerLevel, SpeakerLinkData> DATA_STORE = new HashMap<>();
-
-
     // JUKEBLOCK SIDE
 
     // Activates Jukeblock
-    /*
     public static void activateJukeblock(ServerLevel level, BlockPos jukeblockPos, ItemStack currentDisc) {
-        if (level.getExistingBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity jukeblockBlockEntity && !level.isClientSide) {
+        if (level.getBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity jukeblockBlockEntity && !level.isClientSide) {
             if (!currentDisc.isEmpty()) {
                 int volume = jukeblockBlockEntity.getVolume();
                 float scaledVolume = volume / 100.0F;
-                S2CSyncJukeblockPlayMessage jukeblockPlayMessage = new S2CSyncJukeblockPlayMessage(jukeblockPos, currentDisc, scaledVolume);
-                ModMessages.sendToAllPlayers(jukeblockPlayMessage);
+                ModMessages.sendToAllPlayers(new S2CSyncJukeblockPlayMessage(jukeblockPos, currentDisc, scaledVolume, false));
             }
         }
     }
     // Deactivates Jukeblock
     public static void deactivateJukeblock(ServerLevel level, BlockPos jukeblockPos) {
-        if (level.getExistingBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity jukeblockBlockEntity) {
-            jukeblockBlockEntity.setStopped();
-            S2CSyncJukeblockStopMessage jukeblockStopMessage = new S2CSyncJukeblockStopMessage(jukeblockPos);
-            ModMessages.sendToAllPlayers(jukeblockStopMessage);
+        if (level.getBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity) {
+            ModMessages.sendToAllPlayers(new S2CSyncJukeblockStopMessage(jukeblockPos));
         }
     }
     // Activates all speakers linked to Master's Block Pos
     public static void activateSpeakersJukeblock(ServerLevel level, BlockPos masterBlockPos, ItemStack currentDisc) {
         getLinkedSpeakersJukeblock(level, masterBlockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
-                BlockEntity jukeblockEntity = level.getExistingBlockEntity(masterBlockPos);
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
+                BlockEntity jukeblockEntity = level.getBlockEntity(masterBlockPos);
                 if (jukeblockEntity instanceof JukeblockBlockEntity) {
                     if (!currentDisc.isEmpty()) {
                         speakerBlock.setActive(true, currentDisc);
                         int volume = speakerBlock.getVolume();
                         float scaledVolume = volume / 100.0F;
-                        S2CSyncJukeblockPlayMessage speakerPlayMessage = new S2CSyncJukeblockPlayMessage(speakerPos, currentDisc, scaledVolume, true);
-                        ModMessages.sendToAllPlayers(speakerPlayMessage);
+                        ModMessages.sendToAllPlayers(new S2CSyncJukeblockPlayMessage(speakerPos, currentDisc, scaledVolume, true));
                     }
                 }
             }
@@ -63,10 +56,9 @@ public class SpeakerLinkUtil {
     // Deactivates ALL speakers linked to Master's Block Pos
     public static void deactivateSpeakersJukeblock(ServerLevel level, BlockPos masterBlockPos) {
         getLinkedSpeakersJukeblock(level, masterBlockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 speakerBlock.setActive(false, ItemStack.EMPTY);
-                S2CSyncJukeblockStopMessage speakerStopMessage = new S2CSyncJukeblockStopMessage(speakerPos, true);
-                ModMessages.sendToAllPlayers(speakerStopMessage);
+                ModMessages.sendToAllPlayers(new S2CSyncJukeblockStopMessage(speakerPos, true));
             }
         });
     }
@@ -74,8 +66,7 @@ public class SpeakerLinkUtil {
     public static void deactivateSpeakerJukeblock(ServerLevel level, BlockPos speakerPos) {
         if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
             speakerBlock.setActive(false, ItemStack.EMPTY);
-            S2CSyncJukeblockStopMessage speakerStopMessage = new S2CSyncJukeblockStopMessage(speakerPos, false);
-            ModMessages.sendToAllPlayers(speakerStopMessage);
+            ModMessages.sendToAllPlayers(new S2CSyncJukeblockStopMessage(speakerPos, false));
         }
     }
     // Link speaker to jukeblock
@@ -124,8 +115,6 @@ public class SpeakerLinkUtil {
         return true;
     }
 
-
-
     // JUKEBLOCK HELPER METHODS
 
     // Gets all the linked speakers from a jukeblock
@@ -155,20 +144,18 @@ public class SpeakerLinkUtil {
         }
         return null;
     }
-    */
 
     // JUKEBOX SIDE
 
     // Activates all speakers linked to Master's Block Pos
     public static void activateSpeakersJukebox(ServerLevel level, BlockPos masterBlockPos, ItemStack currentDisc) {
         getLinkedSpeakersJukebox(level, masterBlockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 if (!currentDisc.isEmpty()) {
                     speakerBlock.setActive(true, currentDisc);
                     int volume = speakerBlock.getVolume();
                     float scaledVolume = volume / 100.0F;
-                    S2CSyncJukeboxSpeakersMessage message = new S2CSyncJukeboxSpeakersMessage(speakerPos, currentDisc, scaledVolume);
-                    ModMessages.sendToAllPlayers(message);
+                    ModMessages.sendToAllPlayers(new S2CSyncJukeboxSpeakersMessage(currentDisc, speakerPos, scaledVolume));
                 }
             }
         });
@@ -176,10 +163,9 @@ public class SpeakerLinkUtil {
     // Deactivates ALL speakers linked to Master's Block Pos
     public static void deactivateSpeakersJukebox(ServerLevel level, BlockPos masterBlockPos) {
         getLinkedSpeakersJukebox(level, masterBlockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
                 speakerBlock.setActive(false, ItemStack.EMPTY);
-                S2CSyncJukeboxOrNoteblockStopMessage message = new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, true);
-                ModMessages.sendToAllPlayers(message);
+                ModMessages.sendToAllPlayers(new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, true));
             }
         });
     }
@@ -187,8 +173,7 @@ public class SpeakerLinkUtil {
     public static void deactivateSpeakerJukebox(ServerLevel level, BlockPos speakerPos) {
         if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speakerBlock) {
             speakerBlock.setActive(false, ItemStack.EMPTY);
-            S2CSyncJukeboxOrNoteblockStopMessage message = new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, false);
-            ModMessages.sendToAllPlayers(message);
+            ModMessages.sendToAllPlayers(new S2CSyncJukeboxOrNoteblockStopMessage(speakerPos, false));
         }
     }
     // Link speaker to jukebox
@@ -268,7 +253,7 @@ public class SpeakerLinkUtil {
     // Activates all speakers linked to Noteblock
     public static void activateSpeakersNoteblock(ServerLevel level, BlockPos noteblockPos, int note, String instrumentName) {
         getLinkedSpeakersNoteblock(level, noteblockPos).forEach(speakerPos -> {
-            if (level.getExistingBlockEntity(speakerPos) instanceof SpeakerBlockEntity speaker) {
+            if (level.getBlockEntity(speakerPos) instanceof SpeakerBlockEntity speaker) {
                 int volume = speaker.getVolume();
                 float scaledVolume = volume / 100.0F;
 
@@ -281,8 +266,7 @@ public class SpeakerLinkUtil {
                 } else if (!state.is(ModBlocks.CEILING_SPEAKER.get())) {
                     speaker.spawnParticlesForNoteBlock();
                 }
-                S2CSyncNoteblockSpeakersMessage message = new S2CSyncNoteblockSpeakersMessage(speakerPos, instrumentName, note, scaledVolume);
-                ModMessages.sendToAllPlayers(message);
+                ModMessages.sendToAllPlayers(new S2CSyncNoteblockSpeakersMessage(speakerPos, instrumentName, note, scaledVolume));
             }
         });
     }

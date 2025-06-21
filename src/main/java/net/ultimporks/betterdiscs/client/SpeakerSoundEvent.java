@@ -39,13 +39,15 @@ public class SpeakerSoundEvent {
         JukeboxSong.fromStack(registryAccess, currentDisc).ifPresent(songHolder -> {
             JukeboxSong song = songHolder.value();
 
-            SoundEvent soundEvent = song.soundEvent().get();
+            SoundEvent soundEvent = song.soundEvent().value();
 
-            Vec3 speakerPosVec = new Vec3(speakerPos.getX(), speakerPos.getY(), speakerPos.getZ());
-
-            SoundInstance musicInstance = SimpleSoundInstance.forJukeboxSong(
+            SoundInstance musicInstance = new SimpleSoundInstance(
                     soundEvent,
-                    speakerPosVec
+                    SoundSource.BLOCKS,
+                    volume,
+                    1.0f,
+                    SoundInstance.createUnseededRandom(),
+                    speakerPos
             );
 
             SoundInfo firstSoundInfo = new SoundInfo(

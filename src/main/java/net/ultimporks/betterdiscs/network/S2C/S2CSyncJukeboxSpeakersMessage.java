@@ -15,7 +15,7 @@ public class S2CSyncJukeboxSpeakersMessage {
 
 
     // Constructor for playing Jukebox
-    public S2CSyncJukeboxSpeakersMessage(BlockPos speakerPos, ItemStack currentDisc, float volume) {
+    public S2CSyncJukeboxSpeakersMessage(ItemStack currentDisc, BlockPos speakerPos, float volume) {
         this.currentDisc = currentDisc;
         this.blockPos = speakerPos;
         this.volume = volume;

@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.level.Level;
@@ -41,19 +40,19 @@ public class JukeblockSoundEvents {
             SoundEvent soundEvent = song.soundEvent().value();
             int durationTicks = song.lengthInTicks();
 
-            SoundInstance soundInstance = new SimpleSoundInstance(
+            SoundInstance musicInstance = new SimpleSoundInstance(
                     soundEvent,
-                    SoundSource.RECORDS,
+                    SoundSource.BLOCKS,
                     volume,
-                    1.0F,
+                    1.0f,
                     SoundInstance.createUnseededRandom(),
                     jukeBlockPos
             );
 
-            SoundInfo firstSoundInfo = new SoundInfo(soundInstance, soundEvent, 0, durationTicks);
+            SoundInfo firstSoundInfo = new SoundInfo(musicInstance, soundEvent, 0, durationTicks);
 
             minecraft.execute(() -> {
-                minecraft.getSoundManager().play(soundInstance);
+                minecraft.getSoundManager().play(musicInstance);
                 ACTIVE_SOUNDS_JUKEBLOCK.put(jukeBlockPos, firstSoundInfo);
                 BetterMusicDiscs.jukeblockLOGGING("(JukeblockSoundEvent) - Playing song: " + song.description().getString());
             });
