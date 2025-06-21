@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
@@ -31,10 +32,9 @@ import net.ultimporks.betterdiscs.init.ModBlockEntities;
 import net.ultimporks.betterdiscs.util.SpeakerLinkUtil;
 import net.ultimporks.betterdiscs.util.menus.JukeboxMenu;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
+@SuppressWarnings({"DataFlowIssue", "NullableProblems", "FieldCanBeLocal"})
 public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(18) {
         @Override
@@ -42,8 +42,8 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
             setChanged();
         }
     };
-
-    private final List<ItemStack> playedRecords = new ArrayList<>();
+    protected final ContainerData data;
+    private final Set<Item> playedRecords = new HashSet<>();
 
     // Playing music
     private int isPlaying = 100;
@@ -58,9 +58,6 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
     private int ticksSinceLastEvent;
     private long recordStartedTick;
     private long tickCount;
-
-    protected final ContainerData data;
-
     // Container Data Keys
     private final int volumeKey = 0;
     private final int particlesKey = 1;
@@ -103,11 +100,11 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         ++this.ticksSinceLastEvent;
-        if (isPlaying() && currentDisc != null) {
+        if (this.isPlaying() && currentDisc != null) {
             if (this.currentDisc.getItem() instanceof RecordItem recordItem) {
-                if (shouldRecordStopPlaying(recordItem)) {
+                if (this.shouldRecordStopPlaying(recordItem)) {
                     this.shuffleNext();
-                } else if (shouldSendJukeblockPlayingEvent()) {
+                } else if (this.shouldSendJukeblockPlayingEvent()) {
                     this.ticksSinceLastEvent = 0;
                     this.spawnMusicParticles(pLevel, this.getBlockPos());
                 }
@@ -116,37 +113,27 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         ++this.tickCount;
         // Check if the Playing record is still in the inventory, if not stop playing!
         if (!isPlayingDiscInInventory()) {
-            stopPlaying();
+            this.setStopped(false);
         }
     }
 
-    public boolean isPlayingDiscInInventory() {
-        if (currentDisc != null) {
-            for (int i = 0; i < itemHandler.getSlots(); i++) {
-                ItemStack stack = itemHandler.getStackInSlot(i);
-                if (!stack.isEmpty() && stack.is(currentDisc.getItem())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
+    // Shuffle
     private void shuffleNext() {
         // Stop current sound properly
-        stopPlaying();
+        this.setStopped(true);
 
         // Select a new disc
-        this.currentDisc = selectRandomDisc();
+        ItemStack nextSong = selectRandomDisc();
 
         // If no disc is available, do not attempt to play
-        if (this.currentDisc.isEmpty()) {
+        if (nextSong.isEmpty()) {
             BetterMusicDiscs.jukeblockLOGGING("(JukeblockBlockEntity) - No more records available to shuffle!");
-            setStopped();
+            this.setStopped(false);
             return;
         }
 
         // Reset state
+        this.currentDisc = nextSong;
         this.setPlaying();
         this.recordStartedTick = this.tickCount;
         BetterMusicDiscs.jukeblockLOGGING("(JukeblockBlockEntity) - Shuffling next song at " + this.worldPosition);
@@ -160,7 +147,6 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
 
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stack = itemHandler.getStackInSlot(i);
-
             if (!stack.isEmpty() && stack.getItem() instanceof RecordItem) {
                 discs.add(stack);
             }
@@ -168,33 +154,41 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
 
         if (discs.isEmpty()) return ItemStack.EMPTY;
 
+        // Remove current disc if there are others
         if (discs.size() > 1 && !currentDisc.isEmpty()) {
-            discs.removeIf(stack -> ItemStack.isSameItem(stack, currentDisc));
+            discs.removeIf(stack -> stack.getItem() == currentDisc.getItem());
         }
 
-        // Remove discs that have already been played
-        if (discs.size() > 1) {
-            discs.removeIf(stack -> playedRecords.stream().anyMatch(p -> ItemStack.isSameItem(p, stack)));
-        }
+        // Remove played discs
+        discs.removeIf(stack -> playedRecords.contains(stack.getItem()));
 
-        // If all have been played, stop and reset the list.
+        // If all have been played, stop
         if (discs.isEmpty()) {
-            playedRecords.clear();
-            this.stopPlaying();
             return ItemStack.EMPTY;
         }
 
-        // Pick a random disc and play it
+        // Pick a random disc and play it.
         ItemStack selected = discs.get(level.random.nextInt(discs.size()));
-        playedRecords.add(selected.copy());
+        playedRecords.add(selected.getItem());
         return selected;
     }
 
-    private boolean shouldRecordStopPlaying(RecordItem pRecord) {
-        return this.tickCount >= this.recordStartedTick + (long) pRecord.getLengthInTicks() + 20L;
-    }
-    private boolean shouldSendJukeblockPlayingEvent() {
-        return this.ticksSinceLastEvent >= 20;
+    private void resetPlayedRecords() {
+        Set<Item> availableDiscs = new HashSet<>();
+
+        // Gather all unique record items from the jukeblock inventory
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            ItemStack stack = itemHandler.getStackInSlot(i);
+            if (!stack.isEmpty() && stack.getItem() instanceof RecordItem) {
+                availableDiscs.add(stack.getItem());
+            }
+        }
+
+        // If all have been played, reset
+        if (playedRecords.containsAll(availableDiscs)) {
+            playedRecords.clear();
+            BetterMusicDiscs.jukeblockLOGGING("All records have been played. Resetting playedRecords.");
+        }
     }
 
     // Play
@@ -218,8 +212,8 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         return isActive == itsTrue;
     }
     public void startPlaying() {
-        this.recordStartedTick = this.tickCount;
         this.currentDisc = selectRandomDisc();
+        this.recordStartedTick = this.tickCount;
         this.setPlaying();
         this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
         this.setChanged();
@@ -230,7 +224,7 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     // Stop
-    public void setStopped() {
+    public void setStopped(boolean isShuffling) {
         if (this.isPlaying()) {
             // Set stopped
             this.isStopped = itsTrue;
@@ -239,7 +233,7 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
             this.isPlaying = itsFalse;
             this.data.set(isPlayingKey, itsFalse);
 
-            this.stopPlaying();
+            this.stopPlaying(isShuffling);
             setChanged();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
@@ -252,9 +246,12 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         }
         return isStopped == itsTrue;
     }
-    public void stopPlaying() {
+    public void stopPlaying(boolean isShuffling) {
         this.currentDisc = ItemStack.EMPTY;
         this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
+        if (!isShuffling) {
+            this.resetPlayedRecords();
+        }
         this.setChanged();
 
         SpeakerLinkUtil.deactivateJukeblock((ServerLevel) level, this.worldPosition);
@@ -304,19 +301,40 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
         return particlesNumber == itsTrue;
     }
 
-    // Menus
+    public void drops() {
+        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            inventory.setItem(i, itemHandler.getStackInSlot(i));
+        }
+        Containers.dropContents(this.level, this.worldPosition, inventory);
+    }
+    public boolean isPlayingDiscInInventory() {
+        if (currentDisc != null) {
+            for (int i = 0; i < itemHandler.getSlots(); i++) {
+                ItemStack stack = itemHandler.getStackInSlot(i);
+                if (!stack.isEmpty() && stack.is(currentDisc.getItem())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private boolean shouldRecordStopPlaying(RecordItem pRecord) {
+        return this.tickCount >= this.recordStartedTick + (long) pRecord.getLengthInTicks() + 20L;
+    }
+    private boolean shouldSendJukeblockPlayingEvent() {
+        return this.ticksSinceLastEvent >= 20;
+    }
+
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
         return new JukeboxMenu(pContainerId, pPlayerInventory, this, this.data);
     }
-
     @Override
     public void onChunkUnloaded() {
-        this.setStopped();
+        this.setStopped(false);
         super.onChunkUnloaded();
     }
-
-    // Block data
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
@@ -357,14 +375,6 @@ public class JukeblockBlockEntity extends BlockEntity implements MenuProvider {
             return LazyOptional.of(() -> itemHandler).cast();
         }
         return super.getCapability(cap, side);
-    }
-
-    public void drops() {
-        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            inventory.setItem(i, itemHandler.getStackInSlot(i));
-        }
-        Containers.dropContents(this.level, this.worldPosition, inventory);
     }
 }
 

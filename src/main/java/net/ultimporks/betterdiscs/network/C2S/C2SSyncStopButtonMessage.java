@@ -32,7 +32,7 @@ public class C2SSyncStopButtonMessage {
             BlockEntity blockEntity = level.getExistingBlockEntity(jukeblockPos);
             if (blockEntity instanceof JukeblockBlockEntity jukeblockBlockEntity) {
                 // Stop the BlockEntity from playing
-                jukeblockBlockEntity.setStopped();
+                jukeblockBlockEntity.setStopped(false);
             }
         });
         ctx.setPacketHandled(true);

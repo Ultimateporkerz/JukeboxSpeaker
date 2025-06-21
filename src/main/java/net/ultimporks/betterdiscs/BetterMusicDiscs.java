@@ -15,7 +15,7 @@ public class BetterMusicDiscs {
     // Debugging
     private static final boolean debuggingJukebox = false;
     private static final boolean debuggingNoteblock = false;
-    private static final boolean debuggingJukeblock = false;
+    private static final boolean debuggingJukeblock = true;
     private static final boolean debuggingSpeaker = false;
     private static final boolean debuggingGeneral = false;
 

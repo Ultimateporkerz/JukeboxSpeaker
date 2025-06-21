@@ -50,7 +50,7 @@ public class SpeakerLinkUtil {
     public static void deactivateJukeblock(ServerLevel serverLevel, BlockPos jukeblockPos) {
         if (serverLevel.isClientSide) return;
         if (serverLevel.getExistingBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity jukeblockBlockEntity) {
-            jukeblockBlockEntity.setStopped();
+            jukeblockBlockEntity.setStopped(false);
             S2CSyncJukeblockStopMessage jukeblockStopMessage = new S2CSyncJukeblockStopMessage(jukeblockPos);
             ModMessages.sendToAllPlayers(jukeblockStopMessage);
         }
