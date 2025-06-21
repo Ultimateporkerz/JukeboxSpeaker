@@ -4,10 +4,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncParticleMessage;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncPlayButtonMessage;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncStopButtonMessage;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncVolumeMessage;
+import net.ultimporks.betterdiscs.network.C2S.C2SParticleMessage;
+import net.ultimporks.betterdiscs.network.C2S.C2SButtonMessage;
+import net.ultimporks.betterdiscs.network.C2S.C2SVolumeMessage;
 import net.ultimporks.betterdiscs.network.S2C.*;
 
 public class NetworkHandler {
@@ -51,27 +50,21 @@ public class NetworkHandler {
 
         // Client to Server
         registrar.playToServer(
-                C2SSyncParticleMessage.TYPE,
-                C2SSyncParticleMessage.STREAM_CODEC,
-                ServerPayloadHandler::handleSyncParticleMessage
+                C2SButtonMessage.TYPE,
+                C2SButtonMessage.STREAM_CODEC,
+                JukeblockPayloadHandler::handleButtonsMessage
         );
 
         registrar.playToServer(
-                C2SSyncPlayButtonMessage.TYPE,
-                C2SSyncPlayButtonMessage.STREAM_CODEC,
-                ServerPayloadHandler::handleSyncPlayButtonMessage
+                C2SParticleMessage.TYPE,
+                C2SParticleMessage.STREAM_CODEC,
+                JukeblockPayloadHandler::handleSyncParticleMessage
         );
 
         registrar.playToServer(
-                C2SSyncStopButtonMessage.TYPE,
-                C2SSyncStopButtonMessage.STREAM_CODEC,
-                ServerPayloadHandler::handleSyncStopButtonMessage
-        );
-
-        registrar.playToServer(
-                C2SSyncVolumeMessage.TYPE,
-                C2SSyncVolumeMessage.STREAM_CODEC,
-                ServerPayloadHandler::handleSyncVolumeMessage
+                C2SVolumeMessage.TYPE,
+                C2SVolumeMessage.STREAM_CODEC,
+                JukeblockPayloadHandler::handleSyncVolumeMessage
         );
     }
 }

@@ -14,7 +14,6 @@ public class ClientPayloadHandler {
             JukeblockSoundEvents.playJukeblockSpeakers(data.jukeblockOrSpeakerPos(), data.currentDisc(), data.volume());
         }
     }
-
     public static void handleJukeblockStopMessage(final S2CSyncJukeblockStopMessage data, final IPayloadContext context) {
         if (data.isSpeaker()) {
             JukeblockSoundEvents.stopJukeblockSound(data.jukeblockPos());

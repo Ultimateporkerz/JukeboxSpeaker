@@ -64,7 +64,7 @@ public class BetterMusicDiscs {
     }
     public static void generalLOGGING(String logMessage) {
         if (debuggingGeneral) {
-            LOGGER.info("BetterMusicDiscs LOGGER - TUNING_TOOL - {}", logMessage);
+            LOGGER.info("BetterMusicDiscs LOGGER - GENERAL - {}", logMessage);
         }
     }
 

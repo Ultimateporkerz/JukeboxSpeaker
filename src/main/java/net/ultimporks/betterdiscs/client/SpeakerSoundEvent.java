@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.ultimporks.betterdiscs.BetterMusicDiscs;
@@ -39,8 +38,6 @@ public class SpeakerSoundEvent {
             JukeboxSong song = songHolder.value();
 
             SoundEvent soundEvent = song.soundEvent().value();
-
-            Vec3 speakerPosVec = new Vec3(speakerPos.getX(), speakerPos.getY(), speakerPos.getZ());
 
             SoundInstance musicInstance = new SimpleSoundInstance(
                     soundEvent,
@@ -132,5 +129,3 @@ public class SpeakerSoundEvent {
     }
 
 }
-
-

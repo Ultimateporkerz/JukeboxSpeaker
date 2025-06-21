@@ -19,8 +19,6 @@ import net.ultimporks.betterdiscs.network.S2C.*;
 import java.util.*;
 
 public class SpeakerLinkUtil {
-    private static final Map<ServerLevel, SpeakerLinkData> DATA_STORE = new HashMap<>();
-
     // JUKEBLOCK SIDE
 
     // Activates Jukeblock
@@ -35,8 +33,7 @@ public class SpeakerLinkUtil {
     }
     // Deactivates Jukeblock
     public static void deactivateJukeblock(ServerLevel level, BlockPos jukeblockPos) {
-        if (level.getBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity jukeblockBlockEntity) {
-            jukeblockBlockEntity.setStopped();
+        if (level.getBlockEntity(jukeblockPos) instanceof JukeblockBlockEntity) {
             PacketDistributor.sendToAllPlayers(new S2CSyncJukeblockStopMessage(jukeblockPos, false, false));
         }
     }
@@ -117,8 +114,6 @@ public class SpeakerLinkUtil {
         data.removeAllJukeblockLinks(jukeblockPos);
         return true;
     }
-
-
 
     // JUKEBLOCK HELPER METHODS
 

@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.ultimporks.betterdiscs.Reference;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncVolumeMessage;
-import net.ultimporks.betterdiscs.network.C2S.C2SSyncParticleMessage;
+import net.ultimporks.betterdiscs.network.C2S.C2SVolumeMessage;
+import net.ultimporks.betterdiscs.network.C2S.C2SParticleMessage;
 import net.ultimporks.betterdiscs.util.menus.SpeakerMenus;
 
 public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
@@ -71,7 +71,7 @@ public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
 
             int newVolume = getNewVolume();
 
-            PacketDistributor.sendToServer(new C2SSyncVolumeMessage(menu.getSpeakerPos(), newVolume));
+            PacketDistributor.sendToServer(new C2SVolumeMessage(menu.getSpeakerPos(), newVolume));
             return true;
         }
         return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
@@ -150,10 +150,10 @@ public class SpeakerScreen extends AbstractContainerScreen<SpeakerMenus> {
         if (isWithinBounds(mouseX, mouseY, this.leftPos + 17, this.topPos + 12, 12, 12)) {
             if (particlesEnabled) {
                 // Disable
-                PacketDistributor.sendToServer(new C2SSyncParticleMessage(menu.getSpeakerPos(), false));
+                PacketDistributor.sendToServer(new C2SParticleMessage(menu.getSpeakerPos(), false));
             } else {
                 // Enable
-                PacketDistributor.sendToServer(new C2SSyncParticleMessage(menu.getSpeakerPos(), true));
+                PacketDistributor.sendToServer(new C2SParticleMessage(menu.getSpeakerPos(), true));
             }
             return true;
         }
